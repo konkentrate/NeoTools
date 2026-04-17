@@ -1,0 +1,15 @@
+{
+  "itemGroup.neotools": "NeoTools",
+  "block.neotools.example_block": "Example Block",
+  "item.neotools.example_item": "Example Item",
+
+  "item.neotools.copper_pickaxe": "Copper Pickaxe",
+
+  "neotools.configuration.title": "NeoTools Configs",
+  "neotools.configuration.section.neotools.common.toml": "NeoTools Configs",
+  "neotools.configuration.section.neotools.common.toml.title": "NeoTools Configs",
+  "neotools.configuration.items": "Item List",
+  "neotools.configuration.logDirtBlock": "Log Dirt Block",
+  "neotools.configuration.magicNumberIntroduction": "Magic Number Text",
+  "neotools.configuration.magicNumber": "Magic Number"
+}
