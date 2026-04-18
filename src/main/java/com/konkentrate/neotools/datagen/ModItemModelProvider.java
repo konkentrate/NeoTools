@@ -1,7 +1,7 @@
 package com.konkentrate.neotools.datagen;
 
 import com.konkentrate.neotools.NeoTools;
-import com.konkentrate.neotools.item.ModItems;
+import com.konkentrate.neotools.registry.ModItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;

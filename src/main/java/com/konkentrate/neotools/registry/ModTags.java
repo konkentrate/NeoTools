@@ -1,4 +1,4 @@
-package com.konkentrate.neotools.util;
+package com.konkentrate.neotools.registry;
 
 import com.konkentrate.neotools.NeoTools;
 import net.minecraft.resources.ResourceLocation;

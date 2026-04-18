@@ -1,7 +1,6 @@
 package com.konkentrate.neotools.datagen;
 
 import com.konkentrate.neotools.NeoTools;
-import com.konkentrate.neotools.block.ModBlocks;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;

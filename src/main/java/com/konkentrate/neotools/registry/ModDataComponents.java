@@ -1,4 +1,4 @@
-package com.konkentrate.neotools.component;
+package com.konkentrate.neotools.registry;
 
 import com.konkentrate.neotools.NeoTools;
 import com.konkentrate.neotools.item.component.Gemstone;

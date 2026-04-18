@@ -1,6 +1,6 @@
 package com.konkentrate.neotools.item.tool;
 
-import com.konkentrate.neotools.component.ModDataComponents;
+import com.konkentrate.neotools.registry.ModDataComponents;
 import com.konkentrate.neotools.item.component.Gemstone;
 import com.konkentrate.neotools.item.component.Coating;
 import net.minecraft.core.registries.BuiltInRegistries;

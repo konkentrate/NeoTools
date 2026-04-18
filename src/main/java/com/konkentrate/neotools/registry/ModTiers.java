@@ -1,6 +1,5 @@
-package com.konkentrate.neotools.item;
+package com.konkentrate.neotools.registry;
 
-import com.konkentrate.neotools.util.ModTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Tier;
 import net.neoforged.neoforge.common.SimpleTier;

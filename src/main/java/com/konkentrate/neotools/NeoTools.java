@@ -1,12 +1,12 @@
 package com.konkentrate.neotools;
 
-import com.konkentrate.neotools.component.ModDataComponents;
+import com.konkentrate.neotools.registry.ModDataComponents;
 import net.minecraft.world.item.CreativeModeTabs;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
-import com.konkentrate.neotools.item.ModItems;
-import com.konkentrate.neotools.block.ModBlocks;
+import com.konkentrate.neotools.registry.ModItems;
+import com.konkentrate.neotools.registry.ModBlocks;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;

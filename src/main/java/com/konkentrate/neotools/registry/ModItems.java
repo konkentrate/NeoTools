@@ -1,7 +1,6 @@
-package com.konkentrate.neotools.item;
+package com.konkentrate.neotools.registry;
 
 import com.konkentrate.neotools.NeoTools;
-import com.konkentrate.neotools.component.ModDataComponents;
 import com.konkentrate.neotools.item.component.Coating;
 import com.konkentrate.neotools.item.component.Gemstone;
 import com.konkentrate.neotools.item.tool.NeoPickaxeItem;

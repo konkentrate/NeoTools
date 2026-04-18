@@ -1,8 +1,7 @@
 package com.konkentrate.neotools.datagen;
 
 import com.konkentrate.neotools.NeoTools;
-import com.konkentrate.neotools.item.ModItems;
-import com.konkentrate.neotools.util.ModTags;
+import com.konkentrate.neotools.registry.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;

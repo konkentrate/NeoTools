@@ -1,7 +1,6 @@
 package com.konkentrate.neotools.datagen;
 
-import com.konkentrate.neotools.block.ModBlocks;
-import com.konkentrate.neotools.item.ModItems;
+import com.konkentrate.neotools.registry.ModBlocks;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;

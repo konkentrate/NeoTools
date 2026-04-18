@@ -1,12 +1,11 @@
 package com.konkentrate.neotools.datagen;
 
 import com.konkentrate.neotools.NeoTools;
-import com.konkentrate.neotools.util.ModTags;
+import com.konkentrate.neotools.registry.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
