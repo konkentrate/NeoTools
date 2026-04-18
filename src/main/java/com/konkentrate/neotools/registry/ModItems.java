@@ -4,9 +4,7 @@ import com.konkentrate.neotools.NeoTools;
 import com.konkentrate.neotools.item.component.Coating;
 import com.konkentrate.neotools.item.component.Gemstone;
 import com.konkentrate.neotools.item.tool.*;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -18,7 +16,6 @@ public class ModItems {
     // Helper to avoid repeating .component(COATING)/.component(GEMSTONE)...
     private static Item.Properties neoToolProps() {
         return new Item.Properties()
-                .component(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
                 .component(ModDataComponents.COATING.get(), Coating.EMPTY)
                 .component(ModDataComponents.GEMSTONE.get(), Gemstone.EMPTY);
     }
