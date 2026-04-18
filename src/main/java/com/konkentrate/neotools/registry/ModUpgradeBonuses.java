@@ -25,7 +25,7 @@ public class ModUpgradeBonuses extends SimpleJsonResourceReloadListener {
     private final Map<ResourceLocation, UpgradeBonus> coatingBonuses = new HashMap<>();
 
     private ModUpgradeBonuses() {
-        super(GSON, "neotools/upgrades");
+        super(GSON, "tools/upgrades");
     }
 
     public static ModUpgradeBonuses getInstance() {
@@ -45,15 +45,14 @@ public class ModUpgradeBonuses extends SimpleJsonResourceReloadListener {
                 UpgradeBonus bonus = UpgradeBonus.CODEC.parse(JsonOps.INSTANCE, json)
                         .getOrThrow();
 
+                // Use the item ID stored in the bonus itself
                 String path = id.getPath();
                 if (path.startsWith("gemstones/")) {
-                    ResourceLocation gemId = ResourceLocation.parse(path.substring("gemstones/".length()));
-                    gemstoneBonuses.put(gemId, bonus);
-                    NeoTools.LOGGER.debug("Loaded gemstone: {}", gemId);
+                    gemstoneBonuses.put(bonus.item(), bonus);
+                    NeoTools.LOGGER.debug("Loaded gemstone: {}", bonus.item());
                 } else if (path.startsWith("coatings/")) {
-                    ResourceLocation coatId = ResourceLocation.parse(path.substring("coatings/".length()));
-                    coatingBonuses.put(coatId, bonus);
-                    NeoTools.LOGGER.debug("Loaded coating: {}", coatId);
+                    coatingBonuses.put(bonus.item(), bonus);
+                    NeoTools.LOGGER.debug("Loaded coating: {}", bonus.item());
                 }
             } catch (Exception e) {
                 NeoTools.LOGGER.error("Error loading upgrade '{}'", id, e);

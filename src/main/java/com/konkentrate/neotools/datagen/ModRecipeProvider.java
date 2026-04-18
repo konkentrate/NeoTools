@@ -1,9 +1,13 @@
 package com.konkentrate.neotools.datagen;
 
+import com.konkentrate.neotools.item.component.Gemstone;
+import com.konkentrate.neotools.registry.ModDataComponents;
 import com.konkentrate.neotools.registry.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 
@@ -20,11 +24,27 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 //        List<ItemLike> BISMUTH_SMELTABLES = List.of(ModItems.RAW_BISMUTH,
 //                ModBlocks.BISMUTH_ORE, ModBlocks.BISMUTH_DEEPSLATE_ORE);
 //
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.COPPER_PICKAXE.get())
+        // Copper Pickaxe + Lapis Lazuli → Pickaxe with Lapis Gemstone
+        ItemStack lapisPickaxe = new ItemStack(ModItems.COPPER_PICKAXE.get());
+        lapisPickaxe.set(ModDataComponents.GEMSTONE.get(),
+                new Gemstone(ResourceLocation.withDefaultNamespace("lapis_lazuli")));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, lapisPickaxe)
                 .requires(ModItems.COPPER_PICKAXE.get())
                 .requires(Items.LAPIS_LAZULI)
                 .unlockedBy("has_copper_pickaxe", has(ModItems.COPPER_PICKAXE.get()))
-                .save(recipeOutput);
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("neotools", "copper_pickaxe_lapis"));
+
+        // Copper Pickaxe + Diamond → Pickaxe with Diamond Gemstone
+        ItemStack diamondPickaxe = new ItemStack(ModItems.COPPER_PICKAXE.get());
+        diamondPickaxe.set(ModDataComponents.GEMSTONE.get(),
+                new Gemstone(ResourceLocation.withDefaultNamespace("diamond")));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, diamondPickaxe)
+                .requires(ModItems.COPPER_PICKAXE.get())
+                .requires(Items.DIAMOND)
+                .unlockedBy("has_copper_pickaxe", has(ModItems.COPPER_PICKAXE.get()))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("neotools", "copper_pickaxe_diamond"));
 
 //        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BISMUTH_BLOCK.get())
 //                .pattern("BBB")

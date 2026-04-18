@@ -1,7 +1,8 @@
-package com.konkentrate.neotools.item.component;  // FIXED: was .upgrade
+package com.konkentrate.neotools.item.component;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
 
@@ -10,6 +11,9 @@ import java.util.Optional;
  * All fields are optional - only include what you need in the JSON.
  */
 public record UpgradeBonus(
+        // The item this bonus applies to
+        ResourceLocation item,
+
         // Numeric stat bonuses
         Optional<Float> miningSpeedBonus,
         Optional<Float> miningSpeedMultiplier,
@@ -22,23 +26,20 @@ public record UpgradeBonus(
         Optional<Integer> enchantabilityBonus,
 
         // Special abilities (boolean flags)
-        Optional<Boolean> lightsUp,
-        Optional<Boolean> autoSmelt,
-        Optional<Boolean> silkTouch,
-        Optional<Boolean> veinMiner,
-        Optional<Boolean> waterBreathing,
-        Optional<Boolean> fireResistance
+        Optional<Boolean> autoSmelt
 ) {
 
     public static final UpgradeBonus EMPTY = new UpgradeBonus(
+            null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
             Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-            Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-            Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-            Optional.empty(), Optional.empty(), Optional.empty()
+            Optional.empty(), Optional.empty()
     );
 
     public static final Codec<UpgradeBonus> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
+                    // Item
+                    ResourceLocation.CODEC.fieldOf("item").forGetter(UpgradeBonus::item),
+
                     // Stat bonuses
                     Codec.FLOAT.optionalFieldOf("mining_speed_bonus").forGetter(UpgradeBonus::miningSpeedBonus),
                     Codec.FLOAT.optionalFieldOf("mining_speed_multiplier").forGetter(UpgradeBonus::miningSpeedMultiplier),
@@ -51,12 +52,7 @@ public record UpgradeBonus(
                     Codec.INT.optionalFieldOf("enchantability_bonus").forGetter(UpgradeBonus::enchantabilityBonus),
 
                     // Special abilities
-                    Codec.BOOL.optionalFieldOf("lights_up").forGetter(UpgradeBonus::lightsUp),
-                    Codec.BOOL.optionalFieldOf("auto_smelt").forGetter(UpgradeBonus::autoSmelt),
-                    Codec.BOOL.optionalFieldOf("silk_touch").forGetter(UpgradeBonus::silkTouch),
-                    Codec.BOOL.optionalFieldOf("vein_miner").forGetter(UpgradeBonus::veinMiner),
-                    Codec.BOOL.optionalFieldOf("water_breathing").forGetter(UpgradeBonus::waterBreathing),
-                    Codec.BOOL.optionalFieldOf("fire_resistance").forGetter(UpgradeBonus::fireResistance)
+                    Codec.BOOL.optionalFieldOf("auto_smelt").forGetter(UpgradeBonus::autoSmelt)
             ).apply(instance, UpgradeBonus::new)
     );
 
@@ -71,19 +67,17 @@ public record UpgradeBonus(
     public float getExperienceMultiplier() { return experienceMultiplier.orElse(1f); }
     public int getEnchantabilityBonus() { return enchantabilityBonus.orElse(0); }
 
-    public boolean hasLightsUp() { return lightsUp.orElse(false); }
     public boolean hasAutoSmelt() { return autoSmelt.orElse(false); }
-    public boolean hasSilkTouch() { return silkTouch.orElse(false); }
-    public boolean hasVeinMiner() { return veinMiner.orElse(false); }
-    public boolean hasWaterBreathing() { return waterBreathing.orElse(false); }
-    public boolean hasFireResistance() { return fireResistance.orElse(false); }
 
     /**
      * Combine two bonuses together.
      * Stats are added/multiplied, abilities are OR'd together.
+     * Uses the first bonus's item.
      */
     public UpgradeBonus combine(UpgradeBonus other) {
         return new UpgradeBonus(
+                // ...existing code...
+                this.item,
                 // Combine stats
                 combineFloat(this.miningSpeedBonus, other.miningSpeedBonus, true),
                 combineFloat(this.miningSpeedMultiplier, other.miningSpeedMultiplier, false),
@@ -96,28 +90,23 @@ public record UpgradeBonus(
                 combineInt(this.enchantabilityBonus, other.enchantabilityBonus, true),
 
                 // Combine abilities (OR)
-                combineBoolean(this.lightsUp, other.lightsUp),
-                combineBoolean(this.autoSmelt, other.autoSmelt),
-                combineBoolean(this.silkTouch, other.silkTouch),
-                combineBoolean(this.veinMiner, other.veinMiner),
-                combineBoolean(this.waterBreathing, other.waterBreathing),
-                combineBoolean(this.fireResistance, other.fireResistance)
+                combineBoolean(this.autoSmelt, other.autoSmelt)
         );
     }
 
-    private Optional<Float> combineFloat(Optional<Float> a, Optional<Float> b, boolean add) {
+    private static Optional<Float> combineFloat(Optional<Float> a, Optional<Float> b, boolean add) {
         if (a.isEmpty()) return b;
         if (b.isEmpty()) return a;
         return Optional.of(add ? a.get() + b.get() : a.get() * b.get());
     }
 
-    private Optional<Integer> combineInt(Optional<Integer> a, Optional<Integer> b, boolean add) {
+    private static Optional<Integer> combineInt(Optional<Integer> a, Optional<Integer> b, boolean add) {
         if (a.isEmpty()) return b;
         if (b.isEmpty()) return a;
         return Optional.of(add ? a.get() + b.get() : a.get() * b.get());
     }
 
-    private Optional<Boolean> combineBoolean(Optional<Boolean> a, Optional<Boolean> b) {
+    private static Optional<Boolean> combineBoolean(Optional<Boolean> a, Optional<Boolean> b) {
         if (a.isEmpty()) return b;
         if (b.isEmpty()) return a;
         return Optional.of(a.get() || b.get());
