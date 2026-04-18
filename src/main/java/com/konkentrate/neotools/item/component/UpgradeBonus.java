@@ -1,4 +1,4 @@
-package com.konkentrate.neotools.upgrade;
+package com.konkentrate.neotools.item.component;  // FIXED: was .upgrade
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

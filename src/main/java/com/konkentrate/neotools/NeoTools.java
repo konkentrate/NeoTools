@@ -1,7 +1,12 @@
 package com.konkentrate.neotools;
 
 import com.konkentrate.neotools.registry.ModDataComponents;
+import com.konkentrate.neotools.registry.ModUpgradeBonuses;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.neoforged.bus.api.Event;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -35,6 +40,7 @@ public class NeoTools {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
+
         // Register ourselves for server and other game events we are interested in
         NeoForge.EVENT_BUS.register(this);
 
@@ -49,6 +55,7 @@ public class NeoTools {
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
+
 
     private void commonSetup(final FMLCommonSetupEvent event) {
     }
@@ -69,11 +76,25 @@ public class NeoTools {
     public void onServerStarting(ServerStartingEvent event) {
     }
 
+    // EXTRA: Reload listener for JSON configs
+    @SubscribeEvent
+    public void onAddReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(ModUpgradeBonuses.getInstance());
+        LOGGER.info("Registered ModUpgradeBonuses reload listener (server)");
+    }
+
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+        }
+
+        // EXTRA: Reload listener for JSON configs
+        @SubscribeEvent
+        public static void onRegisterClientReloadListeners(RegisterClientReloadListenersEvent event) {
+            event.registerReloadListener(ModUpgradeBonuses.getInstance());
+            LOGGER.info("Registered ModUpgradeBonuses reload listener (client)");
         }
     }
 
