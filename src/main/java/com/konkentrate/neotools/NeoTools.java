@@ -1,6 +1,7 @@
 package com.konkentrate.neotools;
 
 import com.konkentrate.neotools.registry.ModDataComponents;
+import com.konkentrate.neotools.registry.ModRecipes;
 import com.konkentrate.neotools.registry.ModUpgradeBonuses;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.Event;
@@ -48,6 +49,7 @@ public class NeoTools {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModDataComponents.register(modEventBus);
+        ModRecipes.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);

@@ -9,10 +9,14 @@ import java.util.Optional;
 /**
  * Represents stat bonuses and special abilities for tool upgrades.
  * All fields are optional - only include what you need in the JSON.
+ * Use "item" for a specific item ID, or "tag" for tag-based compat (e.g. "c:ingots/zinc").
  */
 public record UpgradeBonus(
-        // The item this bonus applies to
-        ResourceLocation item,
+        // The item this bonus applies to (exact item match)
+        Optional<ResourceLocation> item,
+
+        // Tag-based match (e.g. "c:ingots/zinc") — matches any item with this tag
+        Optional<ResourceLocation> tag,
 
         // Numeric stat bonuses
         Optional<Float> miningSpeedBonus,
@@ -30,15 +34,17 @@ public record UpgradeBonus(
 ) {
 
     public static final UpgradeBonus EMPTY = new UpgradeBonus(
-            null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+            Optional.empty(), Optional.empty(),
+            Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
             Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
             Optional.empty(), Optional.empty()
     );
 
     public static final Codec<UpgradeBonus> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                    // Item
-                    ResourceLocation.CODEC.fieldOf("item").forGetter(UpgradeBonus::item),
+                    // Item (optional — use either "item" or "tag")
+                    ResourceLocation.CODEC.optionalFieldOf("item").forGetter(UpgradeBonus::item),
+                    ResourceLocation.CODEC.optionalFieldOf("tag").forGetter(UpgradeBonus::tag),
 
                     // Stat bonuses
                     Codec.FLOAT.optionalFieldOf("mining_speed_bonus").forGetter(UpgradeBonus::miningSpeedBonus),
@@ -66,19 +72,17 @@ public record UpgradeBonus(
     public int getFortuneBonus() { return fortuneBonus.orElse(0); }
     public float getExperienceMultiplier() { return experienceMultiplier.orElse(1f); }
     public int getEnchantabilityBonus() { return enchantabilityBonus.orElse(0); }
-
     public boolean hasAutoSmelt() { return autoSmelt.orElse(false); }
 
     /**
      * Combine two bonuses together.
      * Stats are added/multiplied, abilities are OR'd together.
-     * Uses the first bonus's item.
+     * Uses the first bonus's item/tag.
      */
     public UpgradeBonus combine(UpgradeBonus other) {
         return new UpgradeBonus(
-                // ...existing code...
                 this.item,
-                // Combine stats
+                this.tag,
                 combineFloat(this.miningSpeedBonus, other.miningSpeedBonus, true),
                 combineFloat(this.miningSpeedMultiplier, other.miningSpeedMultiplier, false),
                 combineFloat(this.attackDamageBonus, other.attackDamageBonus, true),
@@ -88,8 +92,6 @@ public record UpgradeBonus(
                 combineInt(this.fortuneBonus, other.fortuneBonus, true),
                 combineFloat(this.experienceMultiplier, other.experienceMultiplier, false),
                 combineInt(this.enchantabilityBonus, other.enchantabilityBonus, true),
-
-                // Combine abilities (OR)
                 combineBoolean(this.autoSmelt, other.autoSmelt)
         );
     }

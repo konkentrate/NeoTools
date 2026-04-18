@@ -28,10 +28,13 @@ public class ModUpgradeBonusProvider implements DataProvider {
     public CompletableFuture<?> run(CachedOutput cache) {
         List<CompletableFuture<?>> futures = new ArrayList<>();
 
+        /// HERE ***
+
+
         // ==================== MINECRAFT GEMSTONES ====================
         futures.add(saveGemstone(cache, Items.DIAMOND, gemstone()
-                .miningSpeed(1.5f)
-                .durability(100)));
+                .miningSpeed(100f)
+                .durabilityMultiplier(10)));
 
         futures.add(saveGemstone(cache, Items.EMERALD, gemstone()
                 .miningSpeedMultiplier(1.2f)
@@ -39,14 +42,11 @@ public class ModUpgradeBonusProvider implements DataProvider {
 
         futures.add(saveGemstone(cache, Items.LAPIS_LAZULI, gemstone()
                 .miningSpeed(2.0f)
-                .durabilityMultiplier(100)
                 .enchantability(5)));
 
         // ==================== MOD GEMSTONES ====================
-        // Add gems from other mods here using ModItems - format: saveGemstone(cache, ModItems.YOUR_GEM.get(), ...)
-        // Example: futures.add(saveGemstone(cache, ModItems.TWILIGHT_GEM.get(), gemstone()
-        //         .miningSpeed(2.0f)
-        //         .enchantability(3)));
+        // Exact item:  saveGemstone(cache, "modid:item_name", gemstone()...)
+        // Tag-based:   saveGemstoneTag(cache, "c:gems/your_gem", gemstone()...)
 
         // ==================== MINECRAFT COATINGS ====================
         futures.add(saveCoating(cache, Items.NETHERITE_INGOT, coating()
@@ -59,31 +59,65 @@ public class ModUpgradeBonusProvider implements DataProvider {
         futures.add(saveCoating(cache, Items.GOLD_INGOT, coating()
                 .enchantability(15)));
 
-
         // ==================== MOD COATINGS ====================
-        // Add coatings from other mods here using ModItems - format: saveCoating(cache, ModItems.YOUR_COATING.get(), ...)
-        // Example: futures.add(saveCoating(cache, ModItems.TWILIGHT_WOOD.get(), coating()
-        //         .durabilityMultiplier(1.5f)));
+        // Tag-based: matches zinc ingot from Create, Thermal, Immersive Engineering, etc.
+        futures.add(saveCoatingTag(cache, "c:ingots/zinc", coating()
+                .durabilityMultiplier(1.5f)
+                .miningSpeedMultiplier(1.05f)));
+
+        futures.add(saveCoatingTag(cache, "c:ingots/brass", coating()
+                .durabilityMultiplier(2)
+                .miningSpeedMultiplier(2)));
+
+        // Exact item fallback (only used if no mod provides c:ingots/zinc):
+        // futures.add(saveCoating(cache, "create:zinc_ingot", coating()...));
 
         return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
     }
 
     // ============
-    // Boiler plate
+    // Save helpers
     // ============
 
+    /** Vanilla/compile-time item by ItemLike */
     private CompletableFuture<?> saveGemstone(CachedOutput cache, ItemLike item, BonusBuilder builder) {
-        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.asItem());
-        builder.item(itemId);
-        String fileName = itemId.getPath();
-        return save(cache, "gemstones/" + fileName, builder.build());
+        return saveGemstone(cache, BuiltInRegistries.ITEM.getKey(item.asItem()).toString(), builder);
     }
 
+    /** Mod item by "modid:path" string */
+    private CompletableFuture<?> saveGemstone(CachedOutput cache, String itemId, BonusBuilder builder) {
+        ResourceLocation id = ResourceLocation.parse(itemId);
+        builder.item(id);
+        return save(cache, "gemstones/" + id.getNamespace() + "/" + id.getPath(), builder.build());
+    }
+
+    /** Tag-based gemstone: "namespace:tag/path" — no leading # */
+    private CompletableFuture<?> saveGemstoneTag(CachedOutput cache, String tagId, BonusBuilder builder) {
+        ResourceLocation id = ResourceLocation.parse(tagId);
+        builder.tag(id);
+        // Use tag path as filename, e.g. gemstones/tags/c/gems_zinc
+        String filename = id.getNamespace() + "/" + id.getPath().replace('/', '_');
+        return save(cache, "gemstones/tags/" + filename, builder.build());
+    }
+
+    /** Vanilla/compile-time item by ItemLike */
     private CompletableFuture<?> saveCoating(CachedOutput cache, ItemLike item, BonusBuilder builder) {
-        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.asItem());
-        builder.item(itemId);
-        String fileName = itemId.getPath();
-        return save(cache, "coatings/" + fileName, builder.build());
+        return saveCoating(cache, BuiltInRegistries.ITEM.getKey(item.asItem()).toString(), builder);
+    }
+
+    /** Mod item by "modid:path" string */
+    private CompletableFuture<?> saveCoating(CachedOutput cache, String itemId, BonusBuilder builder) {
+        ResourceLocation id = ResourceLocation.parse(itemId);
+        builder.item(id);
+        return save(cache, "coatings/" + id.getNamespace() + "/" + id.getPath(), builder.build());
+    }
+
+    /** Tag-based coating: "namespace:tag/path" — no leading # */
+    private CompletableFuture<?> saveCoatingTag(CachedOutput cache, String tagId, BonusBuilder builder) {
+        ResourceLocation id = ResourceLocation.parse(tagId);
+        builder.tag(id);
+        String filename = id.getNamespace() + "/" + id.getPath().replace('/', '_');
+        return save(cache, "coatings/tags/" + filename, builder.build());
     }
 
     private CompletableFuture<?> save(CachedOutput cache, String path, UpgradeBonus bonus) {
@@ -97,56 +131,49 @@ public class ModUpgradeBonusProvider implements DataProvider {
         return "Upgrade Bonuses";
     }
 
-    // Fluent builder for easier bonus creation
-    private static BonusBuilder gemstone() {
-        return new BonusBuilder();
-    }
-
-    private static BonusBuilder coating() {
-        return new BonusBuilder();
-    }
+    // Fluent builder factories
+    private static BonusBuilder gemstone() { return new BonusBuilder(); }
+    private static BonusBuilder coating()  { return new BonusBuilder(); }
 
     private static class BonusBuilder {
-        private Optional<Float> miningSpeedBonus = Optional.empty();
-        private Optional<Float> miningSpeedMultiplier = Optional.empty();
-        private Optional<Float> attackDamageBonus = Optional.empty();
-        private Optional<Float> attackDamageMultiplier = Optional.empty();
-        private Optional<Integer> durabilityBonus = Optional.empty();
-        private Optional<Float> durabilityMultiplier = Optional.empty();
-        private Optional<Integer> fortuneBonus = Optional.empty();
-        private Optional<Float> experienceMultiplier = Optional.empty();
-        private Optional<Integer> enchantabilityBonus = Optional.empty();
-        private Optional<Boolean> autoSmelt = Optional.empty();
+        private Optional<ResourceLocation> item = Optional.empty();
+        private Optional<ResourceLocation> tag  = Optional.empty();
 
-        BonusBuilder miningSpeed(float value) { this.miningSpeedBonus = Optional.of(value); return this; }
-        BonusBuilder miningSpeedMultiplier(float value) { this.miningSpeedMultiplier = Optional.of(value); return this; }
-        BonusBuilder attackDamage(float value) { this.attackDamageBonus = Optional.of(value); return this; }
+        private Optional<Float>   miningSpeedBonus       = Optional.empty();
+        private Optional<Float>   miningSpeedMultiplier  = Optional.empty();
+        private Optional<Float>   attackDamageBonus      = Optional.empty();
+        private Optional<Float>   attackDamageMultiplier = Optional.empty();
+        private Optional<Integer> durabilityBonus        = Optional.empty();
+        private Optional<Float>   durabilityMultiplier   = Optional.empty();
+        private Optional<Integer> fortuneBonus           = Optional.empty();
+        private Optional<Float>   experienceMultiplier   = Optional.empty();
+        private Optional<Integer> enchantabilityBonus    = Optional.empty();
+        private Optional<Boolean> autoSmelt              = Optional.empty();
+
+        BonusBuilder item(ResourceLocation value)  { this.item = Optional.of(value); return this; }
+        BonusBuilder tag(ResourceLocation value)   { this.tag  = Optional.of(value); return this; }
+
+        BonusBuilder miningSpeed(float value)            { this.miningSpeedBonus = Optional.of(value); return this; }
+        BonusBuilder miningSpeedMultiplier(float value)  { this.miningSpeedMultiplier = Optional.of(value); return this; }
+        BonusBuilder attackDamage(float value)           { this.attackDamageBonus = Optional.of(value); return this; }
         BonusBuilder attackDamageMultiplier(float value) { this.attackDamageMultiplier = Optional.of(value); return this; }
-        BonusBuilder durability(int value) { this.durabilityBonus = Optional.of(value); return this; }
-        BonusBuilder durabilityMultiplier(float value) { this.durabilityMultiplier = Optional.of(value); return this; }
-        BonusBuilder fortune(int value) { this.fortuneBonus = Optional.of(value); return this; }
-        BonusBuilder experienceMultiplier(float value) { this.experienceMultiplier = Optional.of(value); return this; }
-        BonusBuilder enchantability(int value) { this.enchantabilityBonus = Optional.of(value); return this; }
-        BonusBuilder autoSmelt(boolean value) { this.autoSmelt = Optional.of(value); return this; }
+        BonusBuilder durability(int value)               { this.durabilityBonus = Optional.of(value); return this; }
+        BonusBuilder durabilityMultiplier(float value)   { this.durabilityMultiplier = Optional.of(value); return this; }
+        BonusBuilder fortune(int value)                  { this.fortuneBonus = Optional.of(value); return this; }
+        BonusBuilder experienceMultiplier(float value)   { this.experienceMultiplier = Optional.of(value); return this; }
+        BonusBuilder enchantability(int value)           { this.enchantabilityBonus = Optional.of(value); return this; }
+        BonusBuilder autoSmelt(boolean value)            { this.autoSmelt = Optional.of(value); return this; }
 
         UpgradeBonus build() {
             return new UpgradeBonus(
-                    item, miningSpeedBonus, miningSpeedMultiplier,
+                    item, tag,
+                    miningSpeedBonus, miningSpeedMultiplier,
                     attackDamageBonus, attackDamageMultiplier,
                     durabilityBonus, durabilityMultiplier,
                     fortuneBonus, experienceMultiplier, enchantabilityBonus,
                     autoSmelt
             );
         }
-
-        // ...existing code...
-
-        // Store the item ID
-        private ResourceLocation item;
-
-        BonusBuilder item(ResourceLocation itemId) {
-            this.item = itemId;
-            return this;
-        }
     }
 }
+

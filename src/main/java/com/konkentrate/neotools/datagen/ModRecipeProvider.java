@@ -1,13 +1,10 @@
 package com.konkentrate.neotools.datagen;
 
-import com.konkentrate.neotools.item.component.Gemstone;
-import com.konkentrate.neotools.registry.ModDataComponents;
 import com.konkentrate.neotools.registry.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 
@@ -19,70 +16,53 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput recipeOutput) {
+    protected void buildRecipes(RecipeOutput out) {
+        // Gemstone / coating upgrades happen at the anvil (AnvilUpgradeHandler) — no datagen needed.
 
-//        List<ItemLike> BISMUTH_SMELTABLES = List.of(ModItems.RAW_BISMUTH,
-//                ModBlocks.BISMUTH_ORE, ModBlocks.BISMUTH_DEEPSLATE_ORE);
-//
-        // Copper Pickaxe + Lapis Lazuli → Pickaxe with Lapis Gemstone
-        ItemStack lapisPickaxe = new ItemStack(ModItems.COPPER_PICKAXE.get());
-        lapisPickaxe.set(ModDataComponents.GEMSTONE.get(),
-                new Gemstone(ResourceLocation.withDefaultNamespace("lapis_lazuli")));
+        // ── Copper Toolset ────────────────────────────────────────────────────
+        // C = Copper Ingot   S = Stick
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, lapisPickaxe)
-                .requires(ModItems.COPPER_PICKAXE.get())
-                .requires(Items.LAPIS_LAZULI)
-                .unlockedBy("has_copper_pickaxe", has(ModItems.COPPER_PICKAXE.get()))
-                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("neotools", "copper_pickaxe_lapis"));
+        // Pickaxe:  CCC        Axe:    CC_
+        //           _S_                CS_
+        //           _S_                _S_
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.COPPER_PICKAXE.get())
+                .pattern("CCC").pattern(" S ").pattern(" S ")
+                .define('C', Items.COPPER_INGOT).define('S', Items.STICK)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
+                .save(out, id("copper_pickaxe"));
 
-        // Copper Pickaxe + Diamond → Pickaxe with Diamond Gemstone
-        ItemStack diamondPickaxe = new ItemStack(ModItems.COPPER_PICKAXE.get());
-        diamondPickaxe.set(ModDataComponents.GEMSTONE.get(),
-                new Gemstone(ResourceLocation.withDefaultNamespace("diamond")));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.COPPER_AXE.get())
+                .pattern("CC").pattern("CS").pattern(" S")
+                .define('C', Items.COPPER_INGOT).define('S', Items.STICK)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
+                .save(out, id("copper_axe"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, diamondPickaxe)
-                .requires(ModItems.COPPER_PICKAXE.get())
-                .requires(Items.DIAMOND)
-                .unlockedBy("has_copper_pickaxe", has(ModItems.COPPER_PICKAXE.get()))
-                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("neotools", "copper_pickaxe_diamond"));
+        // Shovel:   _C_        Hoe:    CC_
+        //           _S_                _S_
+        //           _S_                _S_
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.COPPER_SHOVEL.get())
+                .pattern(" C").pattern(" S").pattern(" S")
+                .define('C', Items.COPPER_INGOT).define('S', Items.STICK)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
+                .save(out, id("copper_shovel"));
 
-//        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BISMUTH_BLOCK.get())
-//                .pattern("BBB")
-//                .pattern("BBB")
-//                .pattern("BBB")
-//                .define('B', ModItems.BISMUTH.get())
-//                .unlockedBy("has_bismuth", has(ModItems.BISMUTH)).save(recipeOutput);
-//
-//        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.BISMUTH.get(), 9)
-//                .requires(ModBlocks.BISMUTH_BLOCK)
-//                .unlockedBy("has_bismuth_block", has(ModBlocks.BISMUTH_BLOCK)).save(recipeOutput);
-//
-//        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.BISMUTH.get(), 18)
-//                .requires(ModBlocks.MAGIC_BLOCK)
-//                .unlockedBy("has_magic_block", has(ModBlocks.MAGIC_BLOCK))
-//                .save(recipeOutput, "tutorialmod:bismuth_from_magic_block");
-//
-//        oreSmelting(recipeOutput, BISMUTH_SMELTABLES, RecipeCategory.MISC, ModItems.BISMUTH.get(), 0.25f, 200, "bismuth");
-//        oreBlasting(recipeOutput, BISMUTH_SMELTABLES, RecipeCategory.MISC, ModItems.BISMUTH.get(), 0.25f, 100, "bismuth");
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.COPPER_HOE.get())
+                .pattern("CC").pattern(" S").pattern(" S")
+                .define('C', Items.COPPER_INGOT).define('S', Items.STICK)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
+                .save(out, id("copper_hoe"));
+
+        // Sword:    _C_
+        //           _C_
+        //           _S_
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.COPPER_SWORD.get())
+                .pattern(" C").pattern(" C").pattern(" S")
+                .define('C', Items.COPPER_INGOT).define('S', Items.STICK)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
+                .save(out, id("copper_sword"));
     }
 
-//    protected static void oreSmelting(RecipeOutput recipeOutput, List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult,
-//                                      float pExperience, int pCookingTIme, String pGroup) {
-//        oreCooking(recipeOutput, RecipeSerializer.SMELTING_RECIPE, SmeltingRecipe::new, pIngredients, pCategory, pResult,
-//                pExperience, pCookingTIme, pGroup, "_from_smelting");
-//    }
-//
-//    protected static void oreBlasting(RecipeOutput recipeOutput, List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult,
-//                                      float pExperience, int pCookingTime, String pGroup) {
-//        oreCooking(recipeOutput, RecipeSerializer.BLASTING_RECIPE, BlastingRecipe::new, pIngredients, pCategory, pResult,
-//                pExperience, pCookingTime, pGroup, "_from_blasting");
-//    }
-//
-//    protected static <T extends AbstractCookingRecipe> void oreCooking(RecipeOutput recipeOutput, RecipeSerializer<T> pCookingSerializer, AbstractCookingRecipe.Factory<T> factory,
-//                                                                       List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult, float pExperience, int pCookingTime, String pGroup, String pRecipeName) {
-//        for(ItemLike itemlike : pIngredients) {
-//            SimpleCookingRecipeBuilder.generic(Ingredient.of(itemlike), pCategory, pResult, pExperience, pCookingTime, pCookingSerializer, factory).group(pGroup).unlockedBy(getHasName(itemlike), has(itemlike))
-//                    .save(recipeOutput, NeoTools.MODID + ":" + getItemName(pResult) + pRecipeName + "_" + getItemName(itemlike));
-//        }
-//    }
+    private static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath("neotools", path);
+    }
 }

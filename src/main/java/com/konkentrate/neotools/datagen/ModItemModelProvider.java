@@ -22,7 +22,10 @@ public class ModItemModelProvider extends ItemModelProvider {
 //        basicItem(ModItems.CHISEL.get());
 
         basicItem(ModItems.COPPER_PICKAXE.get());
-
+        basicItem(ModItems.COPPER_AXE.get());
+        basicItem(ModItems.COPPER_HOE.get());
+        basicItem(ModItems.COPPER_SHOVEL.get());
+        basicItem(ModItems.COPPER_SWORD.get());
 
     }
 }
