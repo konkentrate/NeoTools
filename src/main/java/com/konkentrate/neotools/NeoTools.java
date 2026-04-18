@@ -1,5 +1,6 @@
 package com.konkentrate.neotools;
 
+import com.konkentrate.neotools.component.ModDataComponents;
 import net.minecraft.world.item.CreativeModeTabs;
 import org.slf4j.Logger;
 
@@ -37,9 +38,10 @@ public class NeoTools {
         // Register ourselves for server and other game events we are interested in
         NeoForge.EVENT_BUS.register(this);
 
-        // Register custom registries
+        // Register custom registries (for now items, blocks, data components)
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModDataComponents.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);

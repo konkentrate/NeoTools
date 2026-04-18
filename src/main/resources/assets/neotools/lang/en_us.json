@@ -5,6 +5,9 @@
 
   "item.neotools.copper_pickaxe": "Copper Pickaxe",
 
+  "tooltip.neotools.gemstone": "Gemstone: %s",
+  "tooltip.neotools.coating": "Coating: %s",
+
   "neotools.configuration.title": "NeoTools Configs",
   "neotools.configuration.section.neotools.common.toml": "NeoTools Configs",
   "neotools.configuration.section.neotools.common.toml.title": "NeoTools Configs",

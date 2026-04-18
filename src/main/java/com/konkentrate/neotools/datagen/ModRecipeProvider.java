@@ -6,6 +6,7 @@ import com.konkentrate.neotools.item.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
@@ -24,6 +25,12 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 //        List<ItemLike> BISMUTH_SMELTABLES = List.of(ModItems.RAW_BISMUTH,
 //                ModBlocks.BISMUTH_ORE, ModBlocks.BISMUTH_DEEPSLATE_ORE);
 //
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.COPPER_PICKAXE.get())
+                .requires(ModItems.COPPER_PICKAXE.get())
+                .requires(Items.LAPIS_LAZULI)
+                .unlockedBy("has_copper_pickaxe", has(ModItems.COPPER_PICKAXE.get()))
+                .save(recipeOutput);
+
 //        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BISMUTH_BLOCK.get())
 //                .pattern("BBB")
 //                .pattern("BBB")
