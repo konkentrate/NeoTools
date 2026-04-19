@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "R": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    " C",
+    " R",
+    " R"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neotools:copper_shovel"
+  }
+}

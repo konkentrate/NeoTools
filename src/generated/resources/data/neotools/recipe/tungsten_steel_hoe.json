@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "R": {
+      "tag": "c:rods/wooden"
+    },
+    "T": {
+      "tag": "c:ingots/tungsten_steel"
+    }
+  },
+  "pattern": [
+    "TT",
+    " R",
+    " R"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neotools:tungsten_steel_hoe"
+  }
+}

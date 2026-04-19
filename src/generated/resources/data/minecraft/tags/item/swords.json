@@ -1,0 +1,11 @@
+{
+  "values": [
+    "neotools:flint_sword",
+    "neotools:copper_sword",
+    "neotools:bronze_sword",
+    "neotools:iron_sword",
+    "neotools:steel_sword",
+    "neotools:tungsten_steel_sword",
+    "neotools:titanium_sword"
+  ]
+}

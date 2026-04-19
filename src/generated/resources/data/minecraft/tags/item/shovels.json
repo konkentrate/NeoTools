@@ -1,0 +1,11 @@
+{
+  "values": [
+    "neotools:flint_shovel",
+    "neotools:copper_shovel",
+    "neotools:bronze_shovel",
+    "neotools:iron_shovel",
+    "neotools:steel_shovel",
+    "neotools:tungsten_steel_shovel",
+    "neotools:titanium_shovel"
+  ]
+}

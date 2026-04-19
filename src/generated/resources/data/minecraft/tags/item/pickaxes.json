@@ -1,0 +1,11 @@
+{
+  "values": [
+    "neotools:flint_pickaxe",
+    "neotools:copper_pickaxe",
+    "neotools:bronze_pickaxe",
+    "neotools:iron_pickaxe",
+    "neotools:steel_pickaxe",
+    "neotools:tungsten_steel_pickaxe",
+    "neotools:titanium_pickaxe"
+  ]
+}

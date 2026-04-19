@@ -1,0 +1,7 @@
+{
+  "attack_damage_multiplier": 10.0,
+  "attack_speed_bonus": 15.0,
+  "durability_multiplier": 10.0,
+  "mining_speed_bonus": 100.0,
+  "tag": "c:gems/diamond"
+}

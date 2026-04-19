@@ -1,0 +1,11 @@
+{
+  "values": [
+    "neotools:flint_hoe",
+    "neotools:copper_hoe",
+    "neotools:bronze_hoe",
+    "neotools:iron_hoe",
+    "neotools:steel_hoe",
+    "neotools:tungsten_steel_hoe",
+    "neotools:titanium_hoe"
+  ]
+}
