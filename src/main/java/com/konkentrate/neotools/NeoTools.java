@@ -1,13 +1,11 @@
 package com.konkentrate.neotools;
 
+import com.konkentrate.neotools.registry.ModCreativeTabs;
 import com.konkentrate.neotools.registry.ModDataComponents;
 import com.konkentrate.neotools.registry.ModRecipes;
 import com.konkentrate.neotools.registry.ModUpgradeBonuses;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -24,7 +22,6 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -50,9 +47,7 @@ public class NeoTools {
         ModBlocks.register(modEventBus);
         ModDataComponents.register(modEventBus);
         ModRecipes.register(modEventBus);
-
-        // Register the item to a creative tab
-        modEventBus.addListener(this::addCreative);
+        ModCreativeTabs.register(modEventBus);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -60,17 +55,6 @@ public class NeoTools {
 
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-    }
-
-    // Add items and blocks to creative tabs
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
-        // Add item to creative tab
-        if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.accept(ModItems.COPPER_PICKAXE.get());
-        }
-
-
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

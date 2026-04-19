@@ -5,8 +5,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 
 public class NeoAxeItem extends NeoDiggerItem {
-    public NeoAxeItem(Tier tier, Properties properties) {
-        super(tier, BlockTags.MINEABLE_WITH_AXE, properties);
+    public NeoAxeItem(Tier tier, float attackDamage, float attackSpeed, Properties properties) {
+        super(tier, BlockTags.MINEABLE_WITH_AXE, attackDamage, attackSpeed, properties);
     }
 
     @Override

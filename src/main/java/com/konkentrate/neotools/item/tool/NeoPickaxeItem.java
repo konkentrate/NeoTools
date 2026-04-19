@@ -5,8 +5,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 
 public class NeoPickaxeItem extends NeoDiggerItem {
-    public NeoPickaxeItem(Tier tier, Properties properties) {
-        super(tier, BlockTags.MINEABLE_WITH_PICKAXE, properties);
+    public NeoPickaxeItem(Tier tier, float attackDamage, float attackSpeed, Properties properties) {
+        super(tier, BlockTags.MINEABLE_WITH_PICKAXE, attackDamage, attackSpeed, properties);
     }
 
     @Override

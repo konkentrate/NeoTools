@@ -5,20 +5,14 @@ import com.konkentrate.neotools.item.component.Gemstone;
 import com.konkentrate.neotools.item.component.UpgradeBonus;
 import com.konkentrate.neotools.registry.ModDataComponents;
 import com.konkentrate.neotools.registry.ModUpgradeBonuses;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -31,8 +25,9 @@ import java.util.function.Consumer;
  */
 public abstract class NeoDiggerItem extends DiggerItem {
 
-    protected NeoDiggerItem(Tier tier, net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> blocks, Properties properties) {
-        super(tier, blocks, properties);
+    protected NeoDiggerItem(Tier tier, net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> blocks,
+                            float attackDamage, float attackSpeed, Properties properties) {
+        super(tier, blocks, properties.attributes(DiggerItem.createAttributes(tier, attackDamage, attackSpeed)));
     }
 
     // ─────────────────────────────────────────────────
@@ -79,36 +74,8 @@ public abstract class NeoDiggerItem extends DiggerItem {
         return base * bonus.getMiningSpeedMultiplier() + bonus.getMiningSpeedBonus();
     }
 
-    /**
-     * Attack damage + speed via stack-sensitive attribute modifiers.
-     * Only adds modifiers when there is actually a bonus to avoid polluting the attribute list.
-     */
-    @Override
-    public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
-        ItemAttributeModifiers base = super.getDefaultAttributeModifiers(stack);
-        UpgradeBonus bonus = getBonus(stack);
-
-        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-        // Copy existing modifiers
-        base.modifiers().forEach(e -> builder.add(e.attribute(), e.modifier(), e.slot()));
-
-        if (bonus.getAttackDamageBonus() != 0f) {
-            builder.add(Attributes.ATTACK_DAMAGE,
-                    new AttributeModifier(
-                            ResourceLocation.fromNamespaceAndPath("neotools", "upgrade_atk_bonus"),
-                            bonus.getAttackDamageBonus(), AttributeModifier.Operation.ADD_VALUE),
-                    EquipmentSlotGroup.MAINHAND);
-        }
-        if (bonus.getAttackDamageMultiplier() != 1f) {
-            builder.add(Attributes.ATTACK_DAMAGE,
-                    new AttributeModifier(
-                            ResourceLocation.fromNamespaceAndPath("neotools", "upgrade_atk_mult"),
-                            bonus.getAttackDamageMultiplier() - 1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                    EquipmentSlotGroup.MAINHAND);
-        }
-
-        return builder.build();
-    }
+    // Attack damage/speed bonuses are applied via ToolAttributeHandler (ItemAttributeModifiersEvent).
+    // See: ToolAttributeHandler.java
 
     /** On-hit effects: e.g. auto-smelt (placeholder — wire up to server-side logic as needed) */
     @Override
@@ -151,12 +118,101 @@ public abstract class NeoDiggerItem extends DiggerItem {
         Coating  coating  = stack.getOrDefault(ModDataComponents.COATING,  Coating.EMPTY);
 
         if (gemstone.hasGemstone()) {
+            UpgradeBonus bonus = ModUpgradeBonuses.getGemstoneBonus(gemstone.gemstone());
             var gemItem = BuiltInRegistries.ITEM.get(gemstone.gemstone());
-            tooltip.add(Component.translatable("tooltip.neotools.gemstone", gemItem.getDescription()));
+            tooltip.add(Component.translatable("tooltip.neotools.gemstone", gemItem.getDescription())
+                    .withStyle(ChatFormatting.AQUA));
+            appendBonusLines(bonus, tooltip);
         }
         if (coating.hasCoating()) {
-            tooltip.add(Component.translatable("tooltip.neotools.coating", coating.Coating().getPath()));
+            UpgradeBonus bonus = ModUpgradeBonuses.getCoatingBonus(coating.Coating());
+            tooltip.add(Component.translatable("tooltip.neotools.coating", coating.Coating().getPath())
+                    .withStyle(ChatFormatting.GOLD));
+            appendBonusLines(bonus, tooltip);
         }
+    }
+
+    /**
+     * Appends all non-zero stat bonus lines from an UpgradeBonus to the tooltip.
+     * Positive values are shown in green, negative in red.
+     */
+    public static void appendBonusLines(UpgradeBonus bonus, List<Component> tooltip) {
+        // Flat attack damage
+        if (bonus.getAttackDamageBonus() != 0f)
+            tooltip.add(statLine("tooltip.neotools.stat.attack_damage_bonus",
+                    formatFlat(bonus.getAttackDamageBonus()), bonus.getAttackDamageBonus() > 0));
+        // Attack damage multiplier
+        if (bonus.getAttackDamageMultiplier() != 1f)
+            tooltip.add(statLine("tooltip.neotools.stat.attack_damage_mult",
+                    formatPercent(bonus.getAttackDamageMultiplier()), bonus.getAttackDamageMultiplier() > 1f));
+        // Attack speed
+        if (bonus.getAttackSpeedBonus() != 0f)
+            tooltip.add(statLine("tooltip.neotools.stat.attack_speed_bonus",
+                    formatFlat(bonus.getAttackSpeedBonus()), bonus.getAttackSpeedBonus() > 0));
+
+        // Flat mining speed
+        if (bonus.getMiningSpeedBonus() != 0f)
+            tooltip.add(statLine("tooltip.neotools.stat.mining_speed_bonus",
+                    formatFlat(bonus.getMiningSpeedBonus()), bonus.getMiningSpeedBonus() > 0));
+        // Mining speed multiplier
+        if (bonus.getMiningSpeedMultiplier() != 1f)
+            tooltip.add(statLine("tooltip.neotools.stat.mining_speed_mult",
+                    formatPercent(bonus.getMiningSpeedMultiplier()), bonus.getMiningSpeedMultiplier() > 1f));
+
+        // Flat durability
+        if (bonus.getDurabilityBonus() != 0)
+            tooltip.add(statLine("tooltip.neotools.stat.durability_bonus",
+                    formatFlat(bonus.getDurabilityBonus()), bonus.getDurabilityBonus() > 0));
+        // Durability multiplier
+        if (bonus.getDurabilityMultiplier() != 1f)
+            tooltip.add(statLine("tooltip.neotools.stat.durability_mult",
+                    formatPercent(bonus.getDurabilityMultiplier()), bonus.getDurabilityMultiplier() > 1f));
+
+        // Fortune
+        if (bonus.getFortuneBonus() != 0)
+            tooltip.add(statLine("tooltip.neotools.stat.fortune_bonus",
+                    formatFlat(bonus.getFortuneBonus()), bonus.getFortuneBonus() > 0));
+
+        // XP multiplier
+        if (bonus.getExperienceMultiplier() != 1f)
+            tooltip.add(statLine("tooltip.neotools.stat.xp_mult",
+                    formatPercent(bonus.getExperienceMultiplier()), bonus.getExperienceMultiplier() > 1f));
+
+        // Enchantability
+        if (bonus.getEnchantabilityBonus() != 0)
+            tooltip.add(statLine("tooltip.neotools.stat.enchantability_bonus",
+                    formatFlat(bonus.getEnchantabilityBonus()), bonus.getEnchantabilityBonus() > 0));
+
+        // Auto-smelt flag
+        if (bonus.hasAutoSmelt())
+            tooltip.add(Component.translatable("tooltip.neotools.stat.auto_smelt")
+                    .withStyle(ChatFormatting.YELLOW));
+    }
+
+    private static Component statLine(String key, String value, boolean positive) {
+        return Component.translatable(key, value)
+                .withStyle(positive ? ChatFormatting.GREEN : ChatFormatting.RED);
+    }
+
+    /** Formats a flat numeric bonus, e.g. "+3" or "+1.5" */
+    private static String formatFlat(float value) {
+        String sign = value > 0 ? "+" : "";
+        return value == Math.floor(value)
+                ? sign + (int) value
+                : sign + String.format("%.1f", value);
+    }
+
+    private static String formatFlat(int value) {
+        return (value > 0 ? "+" : "") + value;
+    }
+
+    /** Formats a multiplier as a percentage change, e.g. 1.25f → "+25%" */
+    private static String formatPercent(float multiplier) {
+        float pct = (multiplier - 1f) * 100f;
+        String sign = pct > 0 ? "+" : "";
+        return pct == Math.floor(pct)
+                ? sign + (int) pct + "%"
+                : sign + String.format("%.1f", pct) + "%";
     }
 }
 

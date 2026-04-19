@@ -21,11 +21,47 @@ public class ModItemModelProvider extends ItemModelProvider {
 //        basicItem(ModItems.FROSTFIRE_ICE.get());
 //        basicItem(ModItems.CHISEL.get());
 
-        basicItem(ModItems.COPPER_PICKAXE.get());
-        basicItem(ModItems.COPPER_AXE.get());
-        basicItem(ModItems.COPPER_HOE.get());
-        basicItem(ModItems.COPPER_SHOVEL.get());
-        basicItem(ModItems.COPPER_SWORD.get());
+        handheldItem(ModItems.FLINT_PICKAXE.get());
+        handheldItem(ModItems.FLINT_AXE.get());
+        handheldItem(ModItems.FLINT_HOE.get());
+        handheldItem(ModItems.FLINT_SHOVEL.get());
+        handheldItem(ModItems.FLINT_SWORD.get());
+
+        handheldItem(ModItems.BRONZE_PICKAXE.get());
+        handheldItem(ModItems.BRONZE_AXE.get());
+        handheldItem(ModItems.BRONZE_HOE.get());
+        handheldItem(ModItems.BRONZE_SHOVEL.get());
+        handheldItem(ModItems.BRONZE_SWORD.get());
+
+        handheldItem(ModItems.IRON_PICKAXE.get());
+        handheldItem(ModItems.IRON_AXE.get());
+        handheldItem(ModItems.IRON_HOE.get());
+        handheldItem(ModItems.IRON_SHOVEL.get());
+        handheldItem(ModItems.IRON_SWORD.get());
+
+        handheldItem(ModItems.COPPER_PICKAXE.get());
+        handheldItem(ModItems.COPPER_AXE.get());
+        handheldItem(ModItems.COPPER_HOE.get());
+        handheldItem(ModItems.COPPER_SHOVEL.get());
+        handheldItem(ModItems.COPPER_SWORD.get());
+
+        handheldItem(ModItems.STEEL_PICKAXE.get());
+        handheldItem(ModItems.STEEL_AXE.get());
+        handheldItem(ModItems.STEEL_HOE.get());
+        handheldItem(ModItems.STEEL_SHOVEL.get());
+        handheldItem(ModItems.STEEL_SWORD.get());
+
+        handheldItem(ModItems.TUNGSTEN_STEEL_PICKAXE.get());
+        handheldItem(ModItems.TUNGSTEN_STEEL_AXE.get());
+        handheldItem(ModItems.TUNGSTEN_STEEL_HOE.get());
+        handheldItem(ModItems.TUNGSTEN_STEEL_SHOVEL.get());
+        handheldItem(ModItems.TUNGSTEN_STEEL_SWORD.get());
+
+        handheldItem(ModItems.TITANIUM_PICKAXE.get());
+        handheldItem(ModItems.TITANIUM_AXE.get());
+        handheldItem(ModItems.TITANIUM_HOE.get());
+        handheldItem(ModItems.TITANIUM_SHOVEL.get());
+        handheldItem(ModItems.TITANIUM_SWORD.get());
 
     }
 }

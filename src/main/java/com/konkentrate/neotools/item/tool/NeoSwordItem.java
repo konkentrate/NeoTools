@@ -5,31 +5,26 @@ import com.konkentrate.neotools.item.component.Gemstone;
 import com.konkentrate.neotools.item.component.UpgradeBonus;
 import com.konkentrate.neotools.registry.ModDataComponents;
 import com.konkentrate.neotools.registry.ModUpgradeBonuses;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public class NeoSwordItem extends SwordItem {
 
-    public NeoSwordItem(Tier tier, Properties properties) {
-        super(tier, properties);
+    public NeoSwordItem(Tier tier, float attackDamage, float attackSpeed, Properties properties) {
+        super(tier, properties.attributes(SwordItem.createAttributes(tier, attackDamage, attackSpeed)));
     }
 
     // ─────────────────────────────────────────────────
-    // Bonus helpers (mirrored from NeoDiggerItem)
+    // Bonus helpers
     // ─────────────────────────────────────────────────
 
     protected UpgradeBonus getBonus(ItemStack stack) {
@@ -59,36 +54,10 @@ public class NeoSwordItem extends SwordItem {
         return Math.max(1, reduced);
     }
 
-    @Override
-    public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
-        ItemAttributeModifiers base = super.getDefaultAttributeModifiers(stack);
-        UpgradeBonus bonus = getBonus(stack);
-
-        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-        base.modifiers().forEach(e -> builder.add(e.attribute(), e.modifier(), e.slot()));
-
-        if (bonus.getAttackDamageBonus() != 0f) {
-            builder.add(Attributes.ATTACK_DAMAGE,
-                    new AttributeModifier(
-                            ResourceLocation.fromNamespaceAndPath("neotools", "upgrade_atk_bonus"),
-                            bonus.getAttackDamageBonus(), AttributeModifier.Operation.ADD_VALUE),
-                    EquipmentSlotGroup.MAINHAND);
-        }
-        if (bonus.getAttackDamageMultiplier() != 1f) {
-            builder.add(Attributes.ATTACK_DAMAGE,
-                    new AttributeModifier(
-                            ResourceLocation.fromNamespaceAndPath("neotools", "upgrade_atk_mult"),
-                            bonus.getAttackDamageMultiplier() - 1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                    EquipmentSlotGroup.MAINHAND);
-        }
-
-        return builder.build();
-    }
-
     /** On-hit effects hook — wire up auto-smelt, poison coating, etc. here */
     @Override
     public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        super.postHurtEnemy(stack, target, attacker); // hurtAndBreak(1)
+        super.postHurtEnemy(stack, target, attacker);
         // UpgradeBonus bonus = getBonus(stack);
         // if (bonus.hasAutoSmelt()) { ... }
     }
@@ -111,11 +80,17 @@ public class NeoSwordItem extends SwordItem {
         Coating  coating  = stack.getOrDefault(ModDataComponents.COATING,  Coating.EMPTY);
 
         if (gemstone.hasGemstone()) {
+            UpgradeBonus bonus = ModUpgradeBonuses.getGemstoneBonus(gemstone.gemstone());
             var gemItem = BuiltInRegistries.ITEM.get(gemstone.gemstone());
-            tooltip.add(Component.translatable("tooltip.neotools.gemstone", gemItem.getDescription()));
+            tooltip.add(Component.translatable("tooltip.neotools.gemstone", gemItem.getDescription())
+                    .withStyle(ChatFormatting.AQUA));
+            NeoDiggerItem.appendBonusLines(bonus, tooltip);
         }
         if (coating.hasCoating()) {
-            tooltip.add(Component.translatable("tooltip.neotools.coating", coating.Coating().getPath()));
+            UpgradeBonus bonus = ModUpgradeBonuses.getCoatingBonus(coating.Coating());
+            tooltip.add(Component.translatable("tooltip.neotools.coating", coating.Coating().getPath())
+                    .withStyle(ChatFormatting.GOLD));
+            NeoDiggerItem.appendBonusLines(bonus, tooltip);
         }
     }
 }

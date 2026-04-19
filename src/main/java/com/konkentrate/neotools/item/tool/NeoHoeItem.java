@@ -5,8 +5,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 
 public class NeoHoeItem extends NeoDiggerItem {
-    public NeoHoeItem(Tier tier, Properties properties) {
-        super(tier, BlockTags.MINEABLE_WITH_HOE, properties);
+    public NeoHoeItem(Tier tier, float attackDamage, float attackSpeed, Properties properties) {
+        super(tier, BlockTags.MINEABLE_WITH_HOE, attackDamage, attackSpeed, properties);
     }
 
     @Override
