@@ -1,16 +1,11 @@
 package com.konkentrate.neotools;
 
-import com.konkentrate.neotools.registry.ModCreativeTabs;
-import com.konkentrate.neotools.registry.ModDataComponents;
-import com.konkentrate.neotools.registry.ModRecipes;
-import com.konkentrate.neotools.registry.ModUpgradeBonuses;
+import com.konkentrate.neotools.registry.*;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
-import com.konkentrate.neotools.registry.ModItems;
-import com.konkentrate.neotools.registry.ModBlocks;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -38,21 +33,18 @@ public class NeoTools {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
-
         // Register ourselves for server and other game events we are interested in
         NeoForge.EVENT_BUS.register(this);
 
-        // Register custom registries (for now items, blocks, data components)
+        // Register custom registries
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModDataComponents.register(modEventBus);
-        ModRecipes.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
-
 
     private void commonSetup(final FMLCommonSetupEvent event) {
     }
@@ -62,11 +54,13 @@ public class NeoTools {
     public void onServerStarting(ServerStartingEvent event) {
     }
 
-    // EXTRA: Reload listener for JSON configs
+    // Reload listeners for JSON configs
     @SubscribeEvent
     public void onAddReloadListeners(AddReloadListenerEvent event) {
-        event.addListener(ModUpgradeBonuses.getInstance());
-        LOGGER.info("Registered ModUpgradeBonuses reload listener (server)");
+        // Addon types and materials
+        event.addListener(new AddonTypeReloadListener());
+        event.addListener(new AddonMaterialReloadListener());
+        LOGGER.info("Registered addon registry reload listeners (server)");
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
@@ -76,12 +70,14 @@ public class NeoTools {
         public static void onClientSetup(FMLClientSetupEvent event) {
         }
 
-        // EXTRA: Reload listener for JSON configs
+        // Reload listener for JSON configs on client
         @SubscribeEvent
         public static void onRegisterClientReloadListeners(RegisterClientReloadListenersEvent event) {
-            event.registerReloadListener(ModUpgradeBonuses.getInstance());
-            LOGGER.info("Registered ModUpgradeBonuses reload listener (client)");
+            event.registerReloadListener(new AddonTypeReloadListener());
+            event.registerReloadListener(new AddonMaterialReloadListener());
+            LOGGER.info("Registered addon registry reload listeners (client)");
         }
     }
-
 }
+
+

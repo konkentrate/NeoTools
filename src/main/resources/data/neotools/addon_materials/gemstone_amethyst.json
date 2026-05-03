@@ -1,0 +1,8 @@
+{
+  "id": "neotools:gemstone/amethyst",
+  "mining_speed_bonus": 1.5,
+  "mining_speed_multiplier": 1.08,
+  "experience_multiplier": 1.5,
+  "enchantability_bonus": 1
+}
+

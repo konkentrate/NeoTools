@@ -1,0 +1,8 @@
+{
+  "id": "neotools:coating/steel",
+  "attack_damage_bonus": 2.5,
+  "attack_damage_multiplier": 1.2,
+  "durability_multiplier": 1.5,
+  "durability_bonus": 75
+}
+

@@ -1,213 +1,163 @@
 package com.konkentrate.neotools.datagen;
+
+import com.konkentrate.neotools.NeoTools;
 import com.konkentrate.neotools.registry.ModItems;
-import com.konkentrate.neotools.registry.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
+
 import java.util.concurrent.CompletableFuture;
+
+/**
+ * Generates recipes that override vanilla tool recipes to craft NeoTools versions.
+ * This ensures vanilla crafting tables produce addon-capable tools.
+ * 
+ * Run `./gradlew runData` to generate all recipes.
+ */
 public class ModRecipeProvider extends RecipeProvider implements IConditionBuilder {
+
     public ModRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries);
     }
+
     @Override
-    protected void buildRecipes(RecipeOutput out) {
-        // Gemstone / coating upgrades happen at the anvil (AnvilUpgradeHandler) — no datagen needed.
-        // ── Flint Toolset ─────────────────────────────────────────────────────
-        // F = Flint   R = c:rods/wooden
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLINT_PICKAXE.get())
-                .pattern("FFF").pattern(" R ").pattern(" R ")
-                .define('F', Items.FLINT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_flint", has(Items.FLINT))
-                .save(out, id("flint_pickaxe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLINT_AXE.get())
-                .pattern("FF").pattern("FR").pattern(" R")
-                .define('F', Items.FLINT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_flint", has(Items.FLINT))
-                .save(out, id("flint_axe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLINT_SHOVEL.get())
-                .pattern(" F").pattern(" R").pattern(" R")
-                .define('F', Items.FLINT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_flint", has(Items.FLINT))
-                .save(out, id("flint_shovel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLINT_HOE.get())
-                .pattern("FF").pattern(" R").pattern(" R")
-                .define('F', Items.FLINT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_flint", has(Items.FLINT))
-                .save(out, id("flint_hoe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.FLINT_SWORD.get())
-                .pattern(" F").pattern(" F").pattern(" R")
-                .define('F', Items.FLINT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_flint", has(Items.FLINT))
-                .save(out, id("flint_sword"));
-        // ── NeoTools Iron Toolset ──────────────────────────────────────────────
-        // Saved under neotools:iron_* IDs. Vanilla minecraft:iron_* recipes are
-        // disabled via static condition JSONs in data/minecraft/recipe/.
-        // I = Iron Ingot   R = c:rods/wooden
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.IRON_PICKAXE.get())
-                .pattern("III").pattern(" R ").pattern(" R ")
-                .define('I', Items.IRON_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_iron", has(Items.IRON_INGOT))
-                .save(out, id("iron_pickaxe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.IRON_AXE.get())
-                .pattern("II").pattern("IR").pattern(" R")
-                .define('I', Items.IRON_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_iron", has(Items.IRON_INGOT))
-                .save(out, id("iron_axe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.IRON_SHOVEL.get())
-                .pattern(" I").pattern(" R").pattern(" R")
-                .define('I', Items.IRON_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_iron", has(Items.IRON_INGOT))
-                .save(out, id("iron_shovel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.IRON_HOE.get())
-                .pattern("II").pattern(" R").pattern(" R")
-                .define('I', Items.IRON_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_iron", has(Items.IRON_INGOT))
-                .save(out, id("iron_hoe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.IRON_SWORD.get())
-                .pattern(" I").pattern(" I").pattern(" R")
-                .define('I', Items.IRON_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_iron", has(Items.IRON_INGOT))
-                .save(out, id("iron_sword"));
-        // ── Bronze Toolset ─────────────────────────────────────────────────────
-        // B = Bronze Ingot (c:ingots/bronze tag)   R = c:rods/wooden
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BRONZE_PICKAXE.get())
-                .pattern("BBB").pattern(" R ").pattern(" R ")
-                .define('B', ModTags.Items.INGOTS_BRONZE).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_bronze", has(ModTags.Items.INGOTS_BRONZE))
-                .save(out, id("bronze_pickaxe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BRONZE_AXE.get())
-                .pattern("BB").pattern("BR").pattern(" R")
-                .define('B', ModTags.Items.INGOTS_BRONZE).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_bronze", has(ModTags.Items.INGOTS_BRONZE))
-                .save(out, id("bronze_axe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BRONZE_SHOVEL.get())
-                .pattern(" B").pattern(" R").pattern(" R")
-                .define('B', ModTags.Items.INGOTS_BRONZE).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_bronze", has(ModTags.Items.INGOTS_BRONZE))
-                .save(out, id("bronze_shovel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BRONZE_HOE.get())
-                .pattern("BB").pattern(" R").pattern(" R")
-                .define('B', ModTags.Items.INGOTS_BRONZE).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_bronze", has(ModTags.Items.INGOTS_BRONZE))
-                .save(out, id("bronze_hoe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BRONZE_SWORD.get())
-                .pattern(" B").pattern(" B").pattern(" R")
-                .define('B', ModTags.Items.INGOTS_BRONZE).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_bronze", has(ModTags.Items.INGOTS_BRONZE))
-                .save(out, id("bronze_sword"));
-        // ── Copper Toolset ────────────────────────────────────────────────────
-        // C = Copper Ingot   R = c:rods/wooden
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.COPPER_PICKAXE.get())
-                .pattern("CCC").pattern(" R ").pattern(" R ")
-                .define('C', Items.COPPER_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
-                .save(out, id("copper_pickaxe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.COPPER_AXE.get())
-                .pattern("CC").pattern("CR").pattern(" R")
-                .define('C', Items.COPPER_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
-                .save(out, id("copper_axe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.COPPER_SHOVEL.get())
-                .pattern(" C").pattern(" R").pattern(" R")
-                .define('C', Items.COPPER_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
-                .save(out, id("copper_shovel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.COPPER_HOE.get())
-                .pattern("CC").pattern(" R").pattern(" R")
-                .define('C', Items.COPPER_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
-                .save(out, id("copper_hoe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.COPPER_SWORD.get())
-                .pattern(" C").pattern(" C").pattern(" R")
-                .define('C', Items.COPPER_INGOT).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_copper", has(Items.COPPER_INGOT))
-                .save(out, id("copper_sword"));
-        // ── Steel Toolset ──────────────────────────────────────────────────────
-        // S = Steel Ingot (c:ingots/steel tag)   R = c:rods/wooden
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.STEEL_PICKAXE.get())
-                .pattern("SSS").pattern(" R ").pattern(" R ")
-                .define('S', ModTags.Items.INGOTS_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_steel", has(ModTags.Items.INGOTS_STEEL))
-                .save(out, id("steel_pickaxe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.STEEL_AXE.get())
-                .pattern("SS").pattern("SR").pattern(" R")
-                .define('S', ModTags.Items.INGOTS_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_steel", has(ModTags.Items.INGOTS_STEEL))
-                .save(out, id("steel_axe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.STEEL_SHOVEL.get())
-                .pattern(" S").pattern(" R").pattern(" R")
-                .define('S', ModTags.Items.INGOTS_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_steel", has(ModTags.Items.INGOTS_STEEL))
-                .save(out, id("steel_shovel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.STEEL_HOE.get())
-                .pattern("SS").pattern(" R").pattern(" R")
-                .define('S', ModTags.Items.INGOTS_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_steel", has(ModTags.Items.INGOTS_STEEL))
-                .save(out, id("steel_hoe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.STEEL_SWORD.get())
-                .pattern(" S").pattern(" S").pattern(" R")
-                .define('S', ModTags.Items.INGOTS_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_steel", has(ModTags.Items.INGOTS_STEEL))
-                .save(out, id("steel_sword"));
-        // ── Tungsten Steel Toolset ─────────────────────────────────────────────
-        // T = Tungsten Steel Ingot (c:ingots/tungsten_steel tag)   R = c:rods/wooden
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TUNGSTEN_STEEL_PICKAXE.get())
-                .pattern("TTT").pattern(" R ").pattern(" R ")
-                .define('T', ModTags.Items.INGOTS_TUNGSTEN_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_tungsten_steel", has(ModTags.Items.INGOTS_TUNGSTEN_STEEL))
-                .save(out, id("tungsten_steel_pickaxe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TUNGSTEN_STEEL_AXE.get())
-                .pattern("TT").pattern("TR").pattern(" R")
-                .define('T', ModTags.Items.INGOTS_TUNGSTEN_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_tungsten_steel", has(ModTags.Items.INGOTS_TUNGSTEN_STEEL))
-                .save(out, id("tungsten_steel_axe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TUNGSTEN_STEEL_SHOVEL.get())
-                .pattern(" T").pattern(" R").pattern(" R")
-                .define('T', ModTags.Items.INGOTS_TUNGSTEN_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_tungsten_steel", has(ModTags.Items.INGOTS_TUNGSTEN_STEEL))
-                .save(out, id("tungsten_steel_shovel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TUNGSTEN_STEEL_HOE.get())
-                .pattern("TT").pattern(" R").pattern(" R")
-                .define('T', ModTags.Items.INGOTS_TUNGSTEN_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_tungsten_steel", has(ModTags.Items.INGOTS_TUNGSTEN_STEEL))
-                .save(out, id("tungsten_steel_hoe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.TUNGSTEN_STEEL_SWORD.get())
-                .pattern(" T").pattern(" T").pattern(" R")
-                .define('T', ModTags.Items.INGOTS_TUNGSTEN_STEEL).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_tungsten_steel", has(ModTags.Items.INGOTS_TUNGSTEN_STEEL))
-                .save(out, id("tungsten_steel_sword"));
-        // ── Titanium Toolset ───────────────────────────────────────────────────
-        // I = Titanium Ingot (c:ingots/titanium tag)   R = c:rods/wooden
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TITANIUM_PICKAXE.get())
-                .pattern("III").pattern(" R ").pattern(" R ")
-                .define('I', ModTags.Items.INGOTS_TITANIUM).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_titanium", has(ModTags.Items.INGOTS_TITANIUM))
-                .save(out, id("titanium_pickaxe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TITANIUM_AXE.get())
-                .pattern("II").pattern("IR").pattern(" R")
-                .define('I', ModTags.Items.INGOTS_TITANIUM).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_titanium", has(ModTags.Items.INGOTS_TITANIUM))
-                .save(out, id("titanium_axe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TITANIUM_SHOVEL.get())
-                .pattern(" I").pattern(" R").pattern(" R")
-                .define('I', ModTags.Items.INGOTS_TITANIUM).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_titanium", has(ModTags.Items.INGOTS_TITANIUM))
-                .save(out, id("titanium_shovel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TITANIUM_HOE.get())
-                .pattern("II").pattern(" R").pattern(" R")
-                .define('I', ModTags.Items.INGOTS_TITANIUM).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_titanium", has(ModTags.Items.INGOTS_TITANIUM))
-                .save(out, id("titanium_hoe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.TITANIUM_SWORD.get())
-                .pattern(" I").pattern(" I").pattern(" R")
-                .define('I', ModTags.Items.INGOTS_TITANIUM).define('R', ModTags.Items.RODS_WOODEN)
-                .unlockedBy("has_titanium", has(ModTags.Items.INGOTS_TITANIUM))
-                .save(out, id("titanium_sword"));
+    protected void buildRecipes(RecipeOutput output) {
+        NeoTools.LOGGER.info("Generating vanilla tool recipe overrides...");
+
+        // Wooden tools
+        toolRecipes(output, "wooden",
+                ItemTags.PLANKS,
+                ModItems.WOODEN_PICKAXE.get(),
+                ModItems.WOODEN_AXE.get(),
+                ModItems.WOODEN_SHOVEL.get(),
+                ModItems.WOODEN_HOE.get(),
+                ModItems.WOODEN_SWORD.get());
+
+        // Stone tools
+        toolRecipes(output, "stone",
+                ItemTags.STONE_TOOL_MATERIALS,
+                ModItems.STONE_PICKAXE.get(),
+                ModItems.STONE_AXE.get(),
+                ModItems.STONE_SHOVEL.get(),
+                ModItems.STONE_HOE.get(),
+                ModItems.STONE_SWORD.get());
+
+        // Iron tools
+        toolRecipes(output, "iron",
+                Tags.Items.INGOTS_IRON,
+                ModItems.IRON_PICKAXE.get(),
+                ModItems.IRON_AXE.get(),
+                ModItems.IRON_SHOVEL.get(),
+                ModItems.IRON_HOE.get(),
+                ModItems.IRON_SWORD.get());
+
+        // Golden tools
+        toolRecipes(output, "golden",
+                Tags.Items.INGOTS_GOLD,
+                ModItems.GOLDEN_PICKAXE.get(),
+                ModItems.GOLDEN_AXE.get(),
+                ModItems.GOLDEN_SHOVEL.get(),
+                ModItems.GOLDEN_HOE.get(),
+                ModItems.GOLDEN_SWORD.get());
+
+        // Diamond tools
+        toolRecipes(output, "diamond",
+                Tags.Items.GEMS_DIAMOND,
+                ModItems.DIAMOND_PICKAXE.get(),
+                ModItems.DIAMOND_AXE.get(),
+                ModItems.DIAMOND_SHOVEL.get(),
+                ModItems.DIAMOND_HOE.get(),
+                ModItems.DIAMOND_SWORD.get());
+
+        // Netherite tools (smithing upgrades)
+        netheriteSmithing(output, ModItems.DIAMOND_PICKAXE.get(), ModItems.NETHERITE_PICKAXE.get());
+        netheriteSmithing(output, ModItems.DIAMOND_AXE.get(), ModItems.NETHERITE_AXE.get());
+        netheriteSmithing(output, ModItems.DIAMOND_SHOVEL.get(), ModItems.NETHERITE_SHOVEL.get());
+        netheriteSmithing(output, ModItems.DIAMOND_HOE.get(), ModItems.NETHERITE_HOE.get());
+        netheriteSmithing(output, ModItems.DIAMOND_SWORD.get(), ModItems.NETHERITE_SWORD.get());
+
+        NeoTools.LOGGER.info("Generated 30 vanilla tool recipe overrides");
     }
-    private static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath("neotools", path);
+
+    /**
+     * Generate all 5 tool recipes for a given material tier
+     */
+    private void toolRecipes(RecipeOutput output, String tierName,
+                            net.minecraft.tags.TagKey<Item> materialTag,
+                            Item pickaxe, Item axe, Item shovel, Item hoe, Item sword) {
+
+        // Pickaxe: XXX / #
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, pickaxe)
+                .pattern("XXX")
+                .pattern(" # ")
+                .pattern(" # ")
+                .define('X', materialTag)
+                .define('#', Tags.Items.RODS_WOODEN)
+                .unlockedBy("has_material", has(materialTag))
+                .save(output, "minecraft:" + tierName + "_pickaxe");  // Override vanilla recipe
+
+        // Axe: XX / X# / #
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, axe)
+                .pattern("XX ")
+                .pattern("X# ")
+                .pattern(" # ")
+                .define('X', materialTag)
+                .define('#', Tags.Items.RODS_WOODEN)
+                .unlockedBy("has_material", has(materialTag))
+                .save(output, "minecraft:" + tierName + "_axe");
+
+        // Shovel: X / # / #
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, shovel)
+                .pattern(" X ")
+                .pattern(" # ")
+                .pattern(" # ")
+                .define('X', materialTag)
+                .define('#', Tags.Items.RODS_WOODEN)
+                .unlockedBy("has_material", has(materialTag))
+                .save(output, "minecraft:" + tierName + "_shovel");
+
+        // Hoe: XX / # / #
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, hoe)
+                .pattern("XX ")
+                .pattern(" # ")
+                .pattern(" # ")
+                .define('X', materialTag)
+                .define('#', Tags.Items.RODS_WOODEN)
+                .unlockedBy("has_material", has(materialTag))
+                .save(output, "minecraft:" + tierName + "_hoe");
+
+        // Sword: X / X / #
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, sword)
+                .pattern(" X ")
+                .pattern(" X ")
+                .pattern(" # ")
+                .define('X', materialTag)
+                .define('#', Tags.Items.RODS_WOODEN)
+                .unlockedBy("has_material", has(materialTag))
+                .save(output, "minecraft:" + tierName + "_sword");
+    }
+
+    /**
+     * Generate netherite smithing upgrade recipe
+     */
+    private void netheriteSmithing(RecipeOutput output, Item base, Item result) {
+        String name = result.toString().split(":")[1]; // Extract name after "neotools:"
+        
+        SmithingTransformRecipeBuilder.smithing(
+                Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                Ingredient.of(base),
+                Ingredient.of(Tags.Items.INGOTS_NETHERITE),
+                RecipeCategory.TOOLS,
+                result
+        )
+        .unlocks("has_netherite_ingot", has(Tags.Items.INGOTS_NETHERITE))
+        .save(output, "minecraft:" + name + "_smithing");  // Override vanilla netherite upgrade
     }
 }
+

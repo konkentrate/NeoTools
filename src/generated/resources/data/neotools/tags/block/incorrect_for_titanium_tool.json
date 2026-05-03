@@ -1,8 +1,0 @@
-{
-  "remove": [
-    "#neotools:needs_titanium_tool"
-  ],
-  "values": [
-    "#minecraft:incorrect_for_netherite_tool"
-  ]
-}

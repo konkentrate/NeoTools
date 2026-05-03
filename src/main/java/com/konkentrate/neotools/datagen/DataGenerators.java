@@ -25,22 +25,23 @@ public class DataGenerators {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        /// Providers
-
-        generator.addProvider(event.includeServer(), new LootTableProvider(packOutput, Collections.emptySet(),
-                List.of(new LootTableProvider.SubProviderEntry(ModBlockLootTableProvider::new, LootContextParamSets.BLOCK)), lookupProvider));
+        // Recipe Provider
         generator.addProvider(event.includeServer(), new ModRecipeProvider(packOutput, lookupProvider));
 
-        BlockTagsProvider blockTagsProvider = new ModBlockTagProvider(packOutput, lookupProvider, existingFileHelper);
+        // Block and Item Tag Providers
+        BlockTagsProvider blockTagsProvider = new BlockTagsProvider(packOutput, lookupProvider, NeoTools.MODID, existingFileHelper) {
+            @Override
+            protected void addTags(HolderLookup.Provider provider) {}
+        };
         generator.addProvider(event.includeServer(), blockTagsProvider);
         generator.addProvider(event.includeServer(), new ModItemTagProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
 
-        generator.addProvider(event.includeServer(), new ModDataMapProvider(packOutput, lookupProvider));
-
+        // Item Model Provider
         generator.addProvider(event.includeClient(), new ModItemModelProvider(packOutput, existingFileHelper));
-        generator.addProvider(event.includeClient(), new ModBlockStateProvider(packOutput, existingFileHelper));
 
+        // Upgrade Bonus Provider
         generator.addProvider(event.includeServer(), new ModUpgradeBonusProvider(packOutput));
 
     }
 }
+

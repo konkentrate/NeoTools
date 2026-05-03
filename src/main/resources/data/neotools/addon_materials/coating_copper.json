@@ -1,0 +1,8 @@
+{
+  "id": "neotools:coating/copper",
+  "attack_damage_bonus": 1.5,
+  "attack_speed_bonus": 0.3,
+  "durability_bonus": 25,
+  "durability_multiplier": 1.1
+}
+

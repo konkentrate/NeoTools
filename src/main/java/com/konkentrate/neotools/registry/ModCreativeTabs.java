@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -18,56 +19,52 @@ public class ModCreativeTabs {
     public static final Supplier<CreativeModeTab> NEOTOOLS_TAB = CREATIVE_TABS.register("neotools_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.neotools"))
-                    .icon(() -> new ItemStack(ModItems.COPPER_PICKAXE.get()))
+                    .icon(() -> new ItemStack(ModItems.DIAMOND_PICKAXE.get()))
                     .displayItems((parameters, output) -> {
-                        // ── Flint ──────────────────────────────────────────
-                        output.accept(ModItems.FLINT_PICKAXE.get());
-                        output.accept(ModItems.FLINT_AXE.get());
-                        output.accept(ModItems.FLINT_SHOVEL.get());
-                        output.accept(ModItems.FLINT_HOE.get());
-                        output.accept(ModItems.FLINT_SWORD.get());
+                        // All vanilla tools replaced with NeoTools versions
+                        // Organized by tier for easy access
 
-                        // ── Copper ─────────────────────────────────────────
-                        output.accept(ModItems.COPPER_PICKAXE.get());
-                        output.accept(ModItems.COPPER_AXE.get());
-                        output.accept(ModItems.COPPER_SHOVEL.get());
-                        output.accept(ModItems.COPPER_HOE.get());
-                        output.accept(ModItems.COPPER_SWORD.get());
+                        // Wooden Tier
+                        output.accept(ModItems.WOODEN_PICKAXE.get());
+                        output.accept(ModItems.WOODEN_AXE.get());
+                        output.accept(ModItems.WOODEN_SHOVEL.get());
+                        output.accept(ModItems.WOODEN_HOE.get());
+                        output.accept(ModItems.WOODEN_SWORD.get());
 
-                        // ── Bronze ─────────────────────────────────────────
-                        output.accept(ModItems.BRONZE_PICKAXE.get());
-                        output.accept(ModItems.BRONZE_AXE.get());
-                        output.accept(ModItems.BRONZE_SHOVEL.get());
-                        output.accept(ModItems.BRONZE_HOE.get());
-                        output.accept(ModItems.BRONZE_SWORD.get());
+                        // Stone Tier
+                        output.accept(ModItems.STONE_PICKAXE.get());
+                        output.accept(ModItems.STONE_AXE.get());
+                        output.accept(ModItems.STONE_SHOVEL.get());
+                        output.accept(ModItems.STONE_HOE.get());
+                        output.accept(ModItems.STONE_SWORD.get());
 
-                        // ── Iron ───────────────────────────────────────────
+                        // Iron Tier
                         output.accept(ModItems.IRON_PICKAXE.get());
                         output.accept(ModItems.IRON_AXE.get());
                         output.accept(ModItems.IRON_SHOVEL.get());
                         output.accept(ModItems.IRON_HOE.get());
                         output.accept(ModItems.IRON_SWORD.get());
 
-                        // ── Steel ──────────────────────────────────────────
-                        output.accept(ModItems.STEEL_PICKAXE.get());
-                        output.accept(ModItems.STEEL_AXE.get());
-                        output.accept(ModItems.STEEL_SHOVEL.get());
-                        output.accept(ModItems.STEEL_HOE.get());
-                        output.accept(ModItems.STEEL_SWORD.get());
+                        // Golden Tier
+                        output.accept(ModItems.GOLDEN_PICKAXE.get());
+                        output.accept(ModItems.GOLDEN_AXE.get());
+                        output.accept(ModItems.GOLDEN_SHOVEL.get());
+                        output.accept(ModItems.GOLDEN_HOE.get());
+                        output.accept(ModItems.GOLDEN_SWORD.get());
 
-                        // ── Tungsten Steel ─────────────────────────────────
-                        output.accept(ModItems.TUNGSTEN_STEEL_PICKAXE.get());
-                        output.accept(ModItems.TUNGSTEN_STEEL_AXE.get());
-                        output.accept(ModItems.TUNGSTEN_STEEL_SHOVEL.get());
-                        output.accept(ModItems.TUNGSTEN_STEEL_HOE.get());
-                        output.accept(ModItems.TUNGSTEN_STEEL_SWORD.get());
+                        // Diamond Tier
+                        output.accept(ModItems.DIAMOND_PICKAXE.get());
+                        output.accept(ModItems.DIAMOND_AXE.get());
+                        output.accept(ModItems.DIAMOND_SHOVEL.get());
+                        output.accept(ModItems.DIAMOND_HOE.get());
+                        output.accept(ModItems.DIAMOND_SWORD.get());
 
-                        // ── Titanium ───────────────────────────────────────
-                        output.accept(ModItems.TITANIUM_PICKAXE.get());
-                        output.accept(ModItems.TITANIUM_AXE.get());
-                        output.accept(ModItems.TITANIUM_SHOVEL.get());
-                        output.accept(ModItems.TITANIUM_HOE.get());
-                        output.accept(ModItems.TITANIUM_SWORD.get());
+                        // Netherite Tier
+                        output.accept(ModItems.NETHERITE_PICKAXE.get());
+                        output.accept(ModItems.NETHERITE_AXE.get());
+                        output.accept(ModItems.NETHERITE_SHOVEL.get());
+                        output.accept(ModItems.NETHERITE_HOE.get());
+                        output.accept(ModItems.NETHERITE_SWORD.get());
                     })
                     .build());
 

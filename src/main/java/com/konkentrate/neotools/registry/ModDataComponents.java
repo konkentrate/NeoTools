@@ -1,8 +1,7 @@
 package com.konkentrate.neotools.registry;
 
 import com.konkentrate.neotools.NeoTools;
-import com.konkentrate.neotools.item.component.Gemstone;
-import com.konkentrate.neotools.item.component.Coating;
+import com.konkentrate.neotools.item.component.Addons;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
@@ -15,20 +14,16 @@ public final class ModDataComponents {
     public static final DeferredRegister.DataComponents DATA_COMPONENTS =
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, NeoTools.MODID);
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Gemstone>> GEMSTONE =
+    /**
+     * Generic addon component that holds a list of addons applied to a tool.
+     * Each addon has a type (e.g., "neotools:gemstone") and material (e.g., "neotools:gemstone/diamond").
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Addons>> ADDONS =
             DATA_COMPONENTS.registerComponentType(
-                    "gemstone",
+                    "addons",
                     builder -> builder
-                            .persistent(Gemstone.CODEC)
-                            .networkSynchronized(Gemstone.STREAM_CODEC)
-            );
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Coating>> COATING =
-            DATA_COMPONENTS.registerComponentType(
-                    "coating",
-                    builder -> builder
-                            .persistent(Coating.CODEC)
-                            .networkSynchronized(Coating.STREAM_CODEC)
+                            .persistent(Addons.CODEC)
+                            .networkSynchronized(Addons.STREAM_CODEC)
             );
 
 

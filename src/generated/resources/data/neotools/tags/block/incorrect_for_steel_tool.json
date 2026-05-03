@@ -1,8 +1,0 @@
-{
-  "remove": [
-    "#neotools:needs_steel_tool"
-  ],
-  "values": [
-    "#minecraft:incorrect_for_diamond_tool"
-  ]
-}

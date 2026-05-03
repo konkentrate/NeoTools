@@ -1,44 +1,42 @@
 package com.konkentrate.neotools.item.tool;
 
-import com.konkentrate.neotools.item.component.Coating;
-import com.konkentrate.neotools.item.component.Gemstone;
+import com.konkentrate.neotools.item.component.Addons;
 import com.konkentrate.neotools.item.component.UpgradeBonus;
+import com.konkentrate.neotools.registry.ModAddonRegistry;
 import com.konkentrate.neotools.registry.ModDataComponents;
-import com.konkentrate.neotools.registry.ModUpgradeBonuses;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
 
-import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Neo sword item - uses the new Addon system.
+ * Tooltips are handled by UniversalAddonTooltipHandler.
+ */
 public class NeoSwordItem extends SwordItem {
 
     public NeoSwordItem(Tier tier, float attackDamage, float attackSpeed, Properties properties) {
         super(tier, properties.attributes(SwordItem.createAttributes(tier, attackDamage, attackSpeed)));
     }
 
-    // ─────────────────────────────────────────────────
-    // Bonus helpers
-    // ─────────────────────────────────────────────────
-
+    /**
+     * Get combined bonuses from all addons on this tool
+     */
     protected UpgradeBonus getBonus(ItemStack stack) {
-        Gemstone gem  = stack.getOrDefault(ModDataComponents.GEMSTONE, Gemstone.EMPTY);
-        Coating  coat = stack.getOrDefault(ModDataComponents.COATING,  Coating.EMPTY);
-        return ModUpgradeBonuses.getCombinedBonus(
-                gem.hasGemstone()  ? gem.gemstone()  : null,
-                coat.hasCoating()  ? coat.Coating()  : null
-        );
-    }
+        Addons addons = stack.getOrDefault(ModDataComponents.ADDONS, Addons.EMPTY);
+        if (addons.isEmpty()) return UpgradeBonus.EMPTY;
 
-    // ─────────────────────────────────────────────────
-    // Bonus applications
-    // ─────────────────────────────────────────────────
+        UpgradeBonus combined = UpgradeBonus.EMPTY;
+        for (var addon : addons.addons()) {
+            var material = ModAddonRegistry.getInstance().getAddonMaterial(addon.material());
+            if (material != null) {
+                combined = combined.combine(material.toBonus());
+            }
+        }
+        return combined;
+    }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
@@ -54,44 +52,6 @@ public class NeoSwordItem extends SwordItem {
         return Math.max(1, reduced);
     }
 
-    /** On-hit effects hook — wire up auto-smelt, poison coating, etc. here */
-    @Override
-    public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        super.postHurtEnemy(stack, target, attacker);
-        // UpgradeBonus bonus = getBonus(stack);
-        // if (bonus.hasAutoSmelt()) { ... }
-    }
-
-    @Override
-    public float getXpRepairRatio(ItemStack stack) {
-        return super.getXpRepairRatio(stack);
-    }
-
-    // ─────────────────────────────────────────────────
-    // Tooltip
-    // ─────────────────────────────────────────────────
-
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context,
-                                List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, context, tooltip, flag);
-
-        Gemstone gemstone = stack.getOrDefault(ModDataComponents.GEMSTONE, Gemstone.EMPTY);
-        Coating  coating  = stack.getOrDefault(ModDataComponents.COATING,  Coating.EMPTY);
-
-        if (gemstone.hasGemstone()) {
-            UpgradeBonus bonus = ModUpgradeBonuses.getGemstoneBonus(gemstone.gemstone());
-            var gemItem = BuiltInRegistries.ITEM.get(gemstone.gemstone());
-            tooltip.add(Component.translatable("tooltip.neotools.gemstone", gemItem.getDescription())
-                    .withStyle(ChatFormatting.AQUA));
-            NeoDiggerItem.appendBonusLines(bonus, tooltip);
-        }
-        if (coating.hasCoating()) {
-            UpgradeBonus bonus = ModUpgradeBonuses.getCoatingBonus(coating.Coating());
-            tooltip.add(Component.translatable("tooltip.neotools.coating", coating.Coating().getPath())
-                    .withStyle(ChatFormatting.GOLD));
-            NeoDiggerItem.appendBonusLines(bonus, tooltip);
-        }
-    }
+    // Attack damage/speed bonuses are applied via ToolAttributeHandler
 }
 
