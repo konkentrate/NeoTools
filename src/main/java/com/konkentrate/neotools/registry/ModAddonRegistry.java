@@ -94,6 +94,13 @@ public class ModAddonRegistry {
     public boolean isAddonMaterialRegistered(ResourceLocation materialId) {
         return addonMaterials.containsKey(materialId);
     }
+
+    /**
+     * Get all registered addon materials
+     */
+    public java.util.Collection<com.konkentrate.neotools.item.component.AddonMaterial> getAddonMaterials() {
+        return addonMaterials.values();
+    }
 }
 
 

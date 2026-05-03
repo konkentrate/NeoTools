@@ -1,5 +1,6 @@
 {
   "id": "neotools:coating/steel",
+  "material_item": "minecraft:iron_ingot",
   "attack_damage_bonus": 2.5,
   "attack_damage_multiplier": 1.2,
   "durability_multiplier": 1.5,

@@ -1,8 +1,8 @@
 package com.konkentrate.neotools.event;
 
 import com.konkentrate.neotools.NeoTools;
+import com.konkentrate.neotools.item.component.AddonBonus;
 import com.konkentrate.neotools.item.component.Addons;
-import com.konkentrate.neotools.item.component.UpgradeBonus;
 import com.konkentrate.neotools.registry.ModAddonRegistry;
 import com.konkentrate.neotools.registry.ModDataComponents;
 import net.minecraft.ChatFormatting;
@@ -12,11 +12,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 /**
- * Universal tooltip handler that works for ANY item with the ADDONS component,
+ * Tooltip handler that works for ANY item with the ADDONS component,
  * including vanilla tools.
  */
 @EventBusSubscriber(modid = NeoTools.MODID)
-public class UniversalAddonTooltipHandler {
+public class AddonTooltipHandler {
 
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
@@ -38,8 +38,9 @@ public class UniversalAddonTooltipHandler {
             var material = ModAddonRegistry.getInstance().getAddonMaterial(addon.material());
             if (material != null) {
                 // Show addon header
-                String typeName = addon.type().getPath(); // Just the path part
-                String materialName = addon.material().getPath(); // Just the path part
+                String typeName = addon.type().getPath(); // e.g., "gemstone" or "coating"
+                String materialPath = addon.material().getPath(); // e.g., "coating/steel"
+                String materialName = materialPath.substring(materialPath.lastIndexOf('/') + 1); // Just "steel"
 
                 tooltip.add(Component.literal("⬥ " + capitalize(typeName) + ": " + capitalize(materialName))
                         .withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
@@ -50,7 +51,7 @@ public class UniversalAddonTooltipHandler {
         }
     }
 
-    private static void appendBonusLines(UpgradeBonus bonus, java.util.List<Component> tooltip) {
+    private static void appendBonusLines(AddonBonus bonus, java.util.List<Component> tooltip) {
         // Attack bonuses
         if (bonus.getAttackDamageBonus() != 0f)
             tooltip.add(statLine(" ├ Attack Damage", formatFlat(bonus.getAttackDamageBonus()),

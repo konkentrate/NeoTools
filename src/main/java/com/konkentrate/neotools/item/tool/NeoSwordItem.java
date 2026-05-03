@@ -1,7 +1,7 @@
 package com.konkentrate.neotools.item.tool;
 
+import com.konkentrate.neotools.item.component.AddonBonus;
 import com.konkentrate.neotools.item.component.Addons;
-import com.konkentrate.neotools.item.component.UpgradeBonus;
 import com.konkentrate.neotools.registry.ModAddonRegistry;
 import com.konkentrate.neotools.registry.ModDataComponents;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,11 +24,11 @@ public class NeoSwordItem extends SwordItem {
     /**
      * Get combined bonuses from all addons on this tool
      */
-    protected UpgradeBonus getBonus(ItemStack stack) {
+    protected AddonBonus getBonus(ItemStack stack) {
         Addons addons = stack.getOrDefault(ModDataComponents.ADDONS, Addons.EMPTY);
-        if (addons.isEmpty()) return UpgradeBonus.EMPTY;
+        if (addons.isEmpty()) return AddonBonus.EMPTY;
 
-        UpgradeBonus combined = UpgradeBonus.EMPTY;
+        AddonBonus combined = AddonBonus.EMPTY;
         for (var addon : addons.addons()) {
             var material = ModAddonRegistry.getInstance().getAddonMaterial(addon.material());
             if (material != null) {
@@ -40,14 +40,14 @@ public class NeoSwordItem extends SwordItem {
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        UpgradeBonus bonus = getBonus(stack);
+        AddonBonus bonus = getBonus(stack);
         int base = super.getMaxDamage(stack);
         return Math.round((base + bonus.getDurabilityBonus()) * bonus.getDurabilityMultiplier());
     }
 
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<net.minecraft.world.item.Item> onBroken) {
-        UpgradeBonus bonus = getBonus(stack);
+        AddonBonus bonus = getBonus(stack);
         int reduced = Math.round(amount / bonus.getDurabilityMultiplier());
         return Math.max(1, reduced);
     }

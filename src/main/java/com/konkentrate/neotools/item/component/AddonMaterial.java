@@ -12,12 +12,14 @@ import java.util.Optional;
  *
  * To add new stat types:
  *   1. Add field to this record
- *   2. Add getter with default to UpgradeBonus
+ *   2. Add getter with default to AddonBonus
  *   3. Add to CODEC group
  *   4. That's it!
  */
 public record AddonMaterial(
         ResourceLocation id,
+        // Material item representation
+        Optional<ResourceLocation> materialItem,
         // Numeric bonuses
         Optional<Float>   miningSpeedBonus,
         Optional<Float>   miningSpeedMultiplier,
@@ -35,6 +37,7 @@ public record AddonMaterial(
     public static final Codec<AddonMaterial> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     ResourceLocation.CODEC.fieldOf("id").forGetter(AddonMaterial::id),
+                    ResourceLocation.CODEC.optionalFieldOf("material_item").forGetter(AddonMaterial::materialItem),
                     Codec.FLOAT.optionalFieldOf("mining_speed_bonus").forGetter(AddonMaterial::miningSpeedBonus),
                     Codec.FLOAT.optionalFieldOf("mining_speed_multiplier").forGetter(AddonMaterial::miningSpeedMultiplier),
                     Codec.FLOAT.optionalFieldOf("attack_damage_bonus").forGetter(AddonMaterial::attackDamageBonus),
@@ -50,10 +53,10 @@ public record AddonMaterial(
     );
 
     /**
-     * Convert this material's bonuses to an UpgradeBonus for easy combination
+     * Convert this material's bonuses to an AddonBonus for easy combination
      */
-    public UpgradeBonus toBonus() {
-        return UpgradeBonus.builder()
+    public AddonBonus toBonus() {
+        return AddonBonus.builder()
                 .miningSpeedOpt(miningSpeedBonus)
                 .miningSpeedMultiplierOpt(miningSpeedMultiplier)
                 .attackDamageOpt(attackDamageBonus)

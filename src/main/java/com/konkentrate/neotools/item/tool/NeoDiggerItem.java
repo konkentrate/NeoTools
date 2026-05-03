@@ -1,7 +1,7 @@
 package com.konkentrate.neotools.item.tool;
 
+import com.konkentrate.neotools.item.component.AddonBonus;
 import com.konkentrate.neotools.item.component.Addons;
-import com.konkentrate.neotools.item.component.UpgradeBonus;
 import com.konkentrate.neotools.registry.ModAddonRegistry;
 import com.konkentrate.neotools.registry.ModDataComponents;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,11 +27,11 @@ public abstract class NeoDiggerItem extends DiggerItem {
     /**
      * Get combined bonuses from all addons on this tool
      */
-    protected UpgradeBonus getBonus(ItemStack stack) {
+    protected AddonBonus getBonus(ItemStack stack) {
         Addons addons = stack.getOrDefault(ModDataComponents.ADDONS, Addons.EMPTY);
-        if (addons.isEmpty()) return UpgradeBonus.EMPTY;
+        if (addons.isEmpty()) return AddonBonus.EMPTY;
 
-        UpgradeBonus combined = UpgradeBonus.EMPTY;
+        AddonBonus combined = AddonBonus.EMPTY;
         for (var addon : addons.addons()) {
             var material = ModAddonRegistry.getInstance().getAddonMaterial(addon.material());
             if (material != null) {
@@ -44,7 +44,7 @@ public abstract class NeoDiggerItem extends DiggerItem {
     /** Durability: base + flat bonus, then × multiplier */
     @Override
     public int getMaxDamage(ItemStack stack) {
-        UpgradeBonus bonus = getBonus(stack);
+        AddonBonus bonus = getBonus(stack);
         int base = super.getMaxDamage(stack);
         return Math.round((base + bonus.getDurabilityBonus()) * bonus.getDurabilityMultiplier());
     }
@@ -52,7 +52,7 @@ public abstract class NeoDiggerItem extends DiggerItem {
     /** Durability loss reduction */
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<net.minecraft.world.item.Item> onBroken) {
-        UpgradeBonus bonus = getBonus(stack);
+        AddonBonus bonus = getBonus(stack);
         float multiplier = bonus.getDurabilityMultiplier();
         int reduced = Math.round(amount / multiplier);
         return Math.max(1, reduced);
@@ -63,7 +63,7 @@ public abstract class NeoDiggerItem extends DiggerItem {
     public float getDestroySpeed(ItemStack stack, BlockState state) {
         float base = super.getDestroySpeed(stack, state);
         if (base <= 1.0f) return base; // not effective on this block
-        UpgradeBonus bonus = getBonus(stack);
+        AddonBonus bonus = getBonus(stack);
         return base * bonus.getMiningSpeedMultiplier() + bonus.getMiningSpeedBonus();
     }
 

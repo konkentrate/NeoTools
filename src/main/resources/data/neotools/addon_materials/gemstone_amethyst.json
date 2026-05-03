@@ -1,5 +1,6 @@
 {
   "id": "neotools:gemstone/amethyst",
+  "material_item": "minecraft:amethyst_shard",
   "mining_speed_bonus": 1.5,
   "mining_speed_multiplier": 1.08,
   "experience_multiplier": 1.5,

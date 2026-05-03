@@ -1,0 +1,5 @@
+{
+  "comment": "Example language file for addon tooltips. Datapack developers should add these translations to customize addon display names.",
+  "tooltip.neotools.gemstone": "✦ Gemstone: %s",
+  "tooltip.neotools.coating": "◈ Coating: %s"
+}

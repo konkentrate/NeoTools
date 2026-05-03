@@ -12,12 +12,12 @@ import java.util.Optional;
  *
  * To add a new bonus field:
  *   1. Add a @Nullable field + fluent setter to Builder
- *   2. Add a getter (with default) to UpgradeBonus
+ *   2. Add a getter (with default) to AddonBonus
  *   3. Add one line to CODEC group + one arg in the apply() lambda
  *   4. Add one line to combine()
  *   — No other files need to change.
  */
-public final class UpgradeBonus {
+public final class AddonBonus {
 
     // ── Fields (stored as Optional for codec compat) ──────────────────
     private final Optional<ResourceLocation> item;
@@ -34,7 +34,7 @@ public final class UpgradeBonus {
     private final Optional<Integer> enchantabilityBonus;
     private final Optional<Boolean> autoSmelt;
 
-    private UpgradeBonus(Builder b) {
+    private AddonBonus(Builder b) {
         this.item                 = Optional.ofNullable(b.item);
         this.tag                  = Optional.ofNullable(b.tag);
         this.miningSpeedBonus     = Optional.ofNullable(b.miningSpeedBonus);
@@ -77,10 +77,10 @@ public final class UpgradeBonus {
     }
 
     // ── Singleton empty instance ───────────────────────────────────────
-    public static final UpgradeBonus EMPTY = builder().build();
+    public static final AddonBonus EMPTY = builder().build();
 
     // ── Codec ─────────────────────────────────────────────────────────
-    public static final Codec<UpgradeBonus> CODEC = RecordCodecBuilder.create(instance ->
+    public static final Codec<AddonBonus> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
             ResourceLocation.CODEC.optionalFieldOf("item").forGetter(b -> b.item),
             ResourceLocation.CODEC.optionalFieldOf("tag").forGetter(b -> b.tag),
@@ -109,7 +109,7 @@ public final class UpgradeBonus {
     );
 
     // ── Combine two bonuses (gemstone + coating) ───────────────────────
-    public UpgradeBonus combine(UpgradeBonus other) {
+    public AddonBonus combine(AddonBonus other) {
         return builder()
             .miningSpeedOpt(        addFloat(miningSpeedBonus,      other.miningSpeedBonus))
             .miningSpeedMultiplierOpt(mulFloat(miningSpeedMultiplier, other.miningSpeedMultiplier))
@@ -172,6 +172,6 @@ public final class UpgradeBonus {
         Builder enchantabilityOpt(Optional<Integer> v)    { v.ifPresent(this::enchantability); return this; }
         Builder autoSmeltOpt(Optional<Boolean> v)         { v.ifPresent(this::autoSmelt); return this; }
 
-        public UpgradeBonus build() { return new UpgradeBonus(this); }
+        public AddonBonus build() { return new AddonBonus(this); }
     }
 }

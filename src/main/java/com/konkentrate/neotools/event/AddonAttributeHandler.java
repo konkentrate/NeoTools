@@ -2,7 +2,7 @@ package com.konkentrate.neotools.event;
 
 import com.konkentrate.neotools.NeoTools;
 import com.konkentrate.neotools.item.component.Addons;
-import com.konkentrate.neotools.item.component.UpgradeBonus;
+import com.konkentrate.neotools.item.component.AddonBonus;
 import com.konkentrate.neotools.registry.ModAddonRegistry;
 import com.konkentrate.neotools.registry.ModDataComponents;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +15,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 
 @EventBusSubscriber(modid = NeoTools.MODID)
-public class ToolAttributeHandler {
+public class AddonAttributeHandler {
 
     private static final ResourceLocation ATK_BONUS_ID  =
             ResourceLocation.fromNamespaceAndPath(NeoTools.MODID, "addon_atk_bonus");
@@ -35,7 +35,7 @@ public class ToolAttributeHandler {
         if (addons.isEmpty()) return;
 
         // Combine all addon bonuses
-        UpgradeBonus combinedBonus = UpgradeBonus.EMPTY;
+        AddonBonus combinedBonus = AddonBonus.EMPTY;
         for (var addon : addons.addons()) {
             var material = ModAddonRegistry.getInstance().getAddonMaterial(addon.material());
             if (material != null) {
